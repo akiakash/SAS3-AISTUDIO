@@ -4,361 +4,485 @@
  */
 
 import { useState, ReactNode } from 'react';
-import { 
-  Search, 
-  Bell, 
-  History, 
-  HelpCircle, 
-  User, 
-  LayoutDashboard, 
-  Car, 
-  TrendingUp, 
-  DraftingCompass, 
-  Settings2, 
+import {
+  Search,
+  Bell,
+  History,
+  HelpCircle,
+  User,
+  LayoutDashboard,
+  Car,
+  TrendingUp,
+  DraftingCompass,
+  Settings2,
   Cloud,
   ChevronRight,
   Save,
-  Package,
-  Tag,
-  Ruler
+  Gavel,
+  ClipboardList,
+  ListChecks,
+  Image as ImageIcon,
+  Zap,
+  Shield,
+  Activity,
 } from 'lucide-react';
-import { motion } from 'motion/react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('inventory');
 
   return (
-    <div className="min-h-screen flex flex-col bg-background font-sans">
-      {/* Header */}
-      <header className="fixed top-0 z-50 flex justify-between items-center px-4 h-10 w-full bg-white border-b border-line">
-        <div className="flex items-center gap-6">
-          <span className="text-sm font-bold text-slate-900 uppercase tracking-wider">Auction Inventory</span>
-          <div className="relative flex items-center">
-            <Search className="absolute left-2 w-4 h-4 text-slate-400" />
-            <input 
-              className="pl-8 pr-2 h-7 w-64 bg-slate-100 border-none text-[11px] focus:ring-1 focus:ring-primary-container outline-none" 
-              placeholder="Global VIN search..." 
-              type="text" 
+    <div style={{ minHeight: '100vh' }}>
+
+      {/* ── Top Bar ───────────────────────────────────────── */}
+      <header className="topbar">
+        {/* Brand + Search */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+          <div className="topbar-brand">
+            <div className="topbar-logo">
+              <Gavel style={{ width: 15, height: 15, color: '#fff' }} />
+            </div>
+            <div>
+              <div className="topbar-title">Auction OS</div>
+              <div className="topbar-subtitle">Inventory Suite</div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div style={{ width: 1, height: 24, background: '#e2e8f0' }} />
+
+          <div className="topbar-search-wrap">
+            <Search style={{
+              position: 'absolute', left: 10,
+              width: 14, height: 14, color: '#94a3b8',
+              pointerEvents: 'none',
+            }} />
+            <input
+              className="topbar-search"
+              placeholder="Search chassis, stock ID…"
+              type="text"
             />
           </div>
         </div>
-        <div className="flex items-center gap-1">
-          <HeaderButton icon={<Bell className="w-4 h-4" />} />
-          <HeaderButton icon={<History className="w-4 h-4" />} />
-          <HeaderButton icon={<HelpCircle className="w-4 h-4" />} />
-          <div className="ml-2 w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-100 cursor-pointer rounded-sm">
-            <User className="w-5 h-5 fill-slate-600" />
+
+        {/* Right actions */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <div className="status-pill">
+            <div className="status-dot" />
+            Live
+          </div>
+
+          <div style={{ width: 8 }} />
+
+          <button className="topbar-icon-btn" title="Notifications">
+            <Bell style={{ width: 16, height: 16 }} />
+          </button>
+          <button className="topbar-icon-btn" title="History">
+            <History style={{ width: 16, height: 16 }} />
+          </button>
+          <button className="topbar-icon-btn" title="Help">
+            <HelpCircle style={{ width: 16, height: 16 }} />
+          </button>
+
+          <div className="topbar-avatar" title="Account">
+            <User style={{ width: 15, height: 15, color: '#fff' }} />
           </div>
         </div>
       </header>
 
-      <div className="flex flex-1 pt-10">
-        {/* Sidebar */}
-        <nav className="fixed left-0 top-10 h-[calc(100vh-40px)] flex flex-col py-4 w-56 bg-surface-container-low border-r border-line overflow-y-auto">
-          <div className="px-6 mb-8">
-            <div className="text-slate-900 font-black text-sm uppercase tracking-tight">Inventory Ops</div>
-            <div className="text-[10px] text-slate-500 font-medium">V2.0.48</div>
-          </div>
-          
-          <div className="flex flex-col gap-0.5">
-            <SidebarLink 
-              icon={<LayoutDashboard className="w-4 h-4" />} 
-              label="Dashboard" 
-              active={activeTab === 'dashboard'} 
-              onClick={() => setActiveTab('dashboard')}
-            />
-            <SidebarLink 
-              icon={<Car className="w-4 h-4" />} 
-              label="Inventory" 
-              active={activeTab === 'inventory'} 
-              onClick={() => setActiveTab('inventory')}
-            />
-            <SidebarLink 
-              icon={<TrendingUp className="w-4 h-4" />} 
-              label="Auction Intel" 
-              active={activeTab === 'intel'} 
-              onClick={() => setActiveTab('intel')}
-            />
-            <SidebarLink 
-              icon={<DraftingCompass className="w-4 h-4" />} 
-              label="Engineering" 
-              active={activeTab === 'eng'} 
-              onClick={() => setActiveTab('eng')}
-            />
-            <SidebarLink 
-              icon={<Settings2 className="w-4 h-4" />} 
-              label="Mechanical" 
-              active={activeTab === 'mech'} 
-              onClick={() => setActiveTab('mech')}
-            />
-          </div>
+      {/* ── Sidebar ──────────────────────────────────────── */}
+      <nav className="sidebar">
+        <div className="sidebar-section-label">Main Menu</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <NavLink
+            icon={<LayoutDashboard />}
+            label="Dashboard"
+            active={activeTab === 'dashboard'}
+            onClick={() => setActiveTab('dashboard')}
+          />
+          <NavLink
+            icon={<Car />}
+            label="Inventory"
+            active={activeTab === 'inventory'}
+            onClick={() => setActiveTab('inventory')}
+          />
+          <NavLink
+            icon={<TrendingUp />}
+            label="Auction Intel"
+            active={activeTab === 'intel'}
+            onClick={() => setActiveTab('intel')}
+          />
+          <NavLink
+            icon={<DraftingCompass />}
+            label="Engineering"
+            active={activeTab === 'eng'}
+            onClick={() => setActiveTab('eng')}
+          />
+          <NavLink
+            icon={<Settings2 />}
+            label="Mechanical"
+            active={activeTab === 'mech'}
+            onClick={() => setActiveTab('mech')}
+          />
+        </div>
 
-          <div className="mt-auto px-6 py-4 border-t border-line">
-            <div className="flex items-center gap-3 text-slate-400">
-              <Cloud className="w-4 h-4 text-primary opacity-60" />
-              <span className="text-[10px] uppercase tracking-widest font-bold">Systems Nominal</span>
+        <div className="sidebar-footer">
+          <div className="sidebar-footer-row">
+            <div className="sidebar-status-icon">
+              <Cloud style={{ width: 13, height: 13, color: '#16a34a' }} />
             </div>
-          </div>
-        </nav>
-
-        {/* Main Content */}
-        <main className="ml-56 flex-1 p-6 max-w-[1200px]">
-          {/* Action Toolbar */}
-          <div className="flex justify-between items-end mb-6">
             <div>
-              <nav className="flex items-center gap-2 mb-1">
-                <span className="text-body-sm text-outline">Inventory</span>
-                <ChevronRight className="w-3 h-3 text-outline" />
-                <span className="text-body-sm text-slate-600">New Entry</span>
-              </nav>
-              <h1 className="text-h1 text-slate-900">Vehicle Registration Ledger</h1>
+              <div className="sidebar-footer-title">Systems OK</div>
+              <div className="sidebar-footer-sub">v2.0.48 · All services up</div>
             </div>
-            <div className="flex gap-2">
-              <button className="px-4 h-8 bg-white border border-error text-error text-label-caps uppercase hover:bg-error-container transition-colors font-semibold">
-                Delete Draft
-              </button>
-              <button className="px-6 h-8 bg-primary text-white text-label-caps uppercase hover:bg-primary-container transition-all flex items-center gap-2 font-semibold">
-                <Save className="w-4 h-4" />
-                Save Entry
-              </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* ── Main Content ─────────────────────────────────── */}
+      <main className="main-content">
+
+        {/* Page header */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
+          <div>
+            <div className="page-eyebrow">
+              <span>Inventory</span>
+              <ChevronRight style={{ width: 12, height: 12 }} />
+              <a href="#">New Entry</a>
+            </div>
+            <h1 className="page-title">Auction → Order → Vehicle</h1>
+            <p className="page-subtitle">
+              Form layout mirrors the database: auctions, orders, vehicles, and vehicle_details.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+            <button className="btn btn-ghost">Delete Draft</button>
+            <button className="btn btn-primary">
+              <Save style={{ width: 14, height: 14 }} />
+              Save Entry
+            </button>
+          </div>
+        </div>
+
+        {/* ── Auctions + Orders (side-by-side) ─────────── */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+
+          {/* Auctions Card */}
+          <div className="form-card">
+            <div className="form-section">
+              <div className="form-section-header">
+                <div className="form-section-icon">
+                  <Gavel style={{ width: 14, height: 14, color: '#1d4ed8' }} />
+                </div>
+                <span className="form-section-title">Auctions</span>
+                <span className="form-section-tag">auctions</span>
+              </div>
+
+              <div className="section-grid section-grid-2">
+                <div className="col-span-2">
+                  <label className="field-label">Auction ID</label>
+                  <input className="field-input" type="text" placeholder="External auction reference" />
+                </div>
+                <div className="col-span-2">
+                  <label className="field-label">Auction Name</label>
+                  <input className="field-input" type="text" />
+                </div>
+                <div>
+                  <label className="field-label">Auction Company</label>
+                  <input className="field-input" type="text" />
+                </div>
+                <div>
+                  <label className="field-label">Auction Date</label>
+                  <input className="field-input" type="datetime-local" />
+                </div>
+                <div className="col-span-2">
+                  <label className="field-label">Port Letter</label>
+                  <input className="field-input" type="text" />
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Form Grid */}
-          <div className="precision-grid-container">
-            {/* Section: Inventory & Logistics */}
-            <div className="col-span-8 precision-grid-cell">
-              <div className="precision-section-header">
-                <Package className="w-4 h-4 text-primary" />
-                <h2 className="text-label-caps text-slate-600">Inventory & Logistics</h2>
+          {/* Orders Card */}
+          <div className="form-card">
+            <div className="form-section">
+              <div className="form-section-header">
+                <div className="form-section-icon">
+                  <ClipboardList style={{ width: 14, height: 14, color: '#1d4ed8' }} />
+                </div>
+                <span className="form-section-title">Orders</span>
+                <span className="form-section-tag">orders</span>
               </div>
-              <div className="grid grid-cols-3 gap-4">
+
+              <div className="section-grid section-grid-2">
                 <div>
-                  <label className="precision-label">Stock Number</label>
-                  <input className="precision-input" type="text" defaultValue="STK-99284-X" />
+                  <label className="field-label">Order ID</label>
+                  <input className="field-input" type="text" />
                 </div>
                 <div>
-                  <label className="precision-label">Arrival Date</label>
-                  <input className="precision-input" type="date" />
-                </div>
-                <div>
-                  <label className="precision-label">Logistics Tier</label>
-                  <select className="precision-input">
-                    <option>Expedited Sea</option>
-                    <option>Standard Rail</option>
-                    <option>Direct Carrier</option>
+                  <label className="field-label">Sold Status</label>
+                  <select className="field-input">
+                    <option value="">Select…</option>
+                    <option>Sold</option>
+                    <option>Unsold</option>
+                    <option>Pending</option>
                   </select>
                 </div>
+                <div>
+                  <label className="field-label">Purchase Manager</label>
+                  <input className="field-input" type="text" />
+                </div>
+                <div>
+                  <label className="field-label">Auction ID (FK)</label>
+                  <input className="field-input" type="number" placeholder="Linked auction id" />
+                </div>
+                <div>
+                  <label className="field-label">POS Number</label>
+                  <input className="field-input" type="text" />
+                </div>
+                <div>
+                  <label className="field-label">Giri Giri</label>
+                  <input className="field-input" type="text" />
+                </div>
+                <div className="col-span-2">
+                  <label className="field-label">Created At</label>
+                  <input className="field-input" type="datetime-local" readOnly />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Vehicles Card ─────────────────────────────── */}
+        <div className="form-card" style={{ marginBottom: 16 }}>
+          <div className="form-section">
+            <div className="form-section-header">
+              <div className="form-section-icon">
+                <Car style={{ width: 14, height: 14, color: '#1d4ed8' }} />
+              </div>
+              <span className="form-section-title">Vehicles</span>
+              <span className="form-section-tag">vehicles</span>
+            </div>
+
+            <div style={{ marginBottom: 18 }}>
+              <label className="field-label">Order ID (FK)</label>
+              <input className="field-input" type="number" placeholder="Parent order id" style={{ maxWidth: 220 }} />
+            </div>
+
+            <div className="section-grid section-grid-4">
+              {[
+                { label: 'Make', type: 'text' },
+                { label: 'Brand', type: 'text' },
+                { label: 'Model', type: 'text' },
+                { label: 'Model Name', type: 'text' },
+                { label: 'Model Number', type: 'text' },
+                { label: 'Type', type: 'text' },
+                { label: 'Chassis Number', type: 'text' },
+                { label: 'Chassis Tick', type: 'text' },
+                { label: 'Engine Number', type: 'text' },
+                { label: 'Manufacture Year', type: 'text' },
+                { label: 'Manufacture Month', type: 'text' },
+                { label: 'Register Year', type: 'text' },
+                { label: 'Register Month', type: 'text' },
+                { label: 'Gear Type', type: 'text' },
+                { label: 'Doors', type: 'number' },
+                { label: 'Seats', type: 'number' },
+                { label: 'Fuel', type: 'text' },
+                { label: 'KM Mileage', type: 'number' },
+              ].map(({ label, type }) => (
+                <div key={label}>
+                  <label className="field-label">{label}</label>
+                  <input className="field-input" type={type} min={type === 'number' ? 0 : undefined} />
+                </div>
+              ))}
+              <div>
+                <label className="field-label">Created At</label>
+                <input className="field-input" type="datetime-local" readOnly />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Vehicle Details Card ──────────────────────── */}
+        <div className="form-card" style={{ marginBottom: 24 }}>
+          <div className="form-section">
+            <div className="form-section-header">
+              <div className="form-section-icon">
+                <ListChecks style={{ width: 14, height: 14, color: '#1d4ed8' }} />
+              </div>
+              <span className="form-section-title">Vehicle Details</span>
+              <span className="form-section-tag">vehicle_details</span>
+            </div>
+
+            <div style={{ marginBottom: 20 }}>
+              <label className="field-label">Vehicle ID (FK)</label>
+              <input className="field-input" type="number" placeholder="Parent vehicle id" style={{ maxWidth: 220 }} />
+            </div>
+
+            {/* Equipment flags */}
+            <div style={{ marginBottom: 24 }}>
+              <div className="flags-heading">
+                <Zap style={{ width: 12, height: 12 }} />
+                Equipment Flags
+              </div>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
+                gap: 8,
+              }}>
+                {['Airbag', 'ABS', 'Air Condition', 'Power Mirror', 'Power Steering', 'Power Window', 'Rear Wiper', 'Sun Roof', 'Stereo'].map(flag => (
+                  <FlagCheckbox key={flag} label={flag} />
+                ))}
               </div>
             </div>
 
-            {/* Section: Market Presentation */}
-            <div className="col-span-4 precision-grid-cell bg-surface-container-low!">
-              <div className="precision-section-header">
-                <Tag className="w-4 h-4 text-primary" />
-                <h2 className="text-label-caps text-slate-600">Market Presentation</h2>
-              </div>
-              <div className="flex flex-wrap gap-2 mb-4">
-                <Badge color="blue">Premium Grade</Badge>
-                <Badge color="slate">Export Ready</Badge>
-                <Badge color="orange">Rare Config</Badge>
+            {/* Horizontal rule */}
+            <div style={{ height: 1, background: '#f1f5f9', margin: '0 -28px 24px' }} />
+
+            {/* Detail fields */}
+            <div className="section-grid section-grid-4" style={{ marginBottom: 16 }}>
+              <div>
+                <label className="field-label">Color</label>
+                <input className="field-input" type="text" />
               </div>
               <div>
-                <label className="precision-label">MSRP Estimate</label>
-                <div className="flex items-center">
-                  <span className="bg-slate-200 px-3 h-8 flex items-center border border-r-0 border-line text-xs font-bold">$</span>
-                  <input className="precision-input" placeholder="0.00" type="text" />
-                </div>
+                <label className="field-label">Country</label>
+                <input className="field-input" type="text" />
+              </div>
+              <div>
+                <label className="field-label">Price (Yen)</label>
+                <input className="field-input" type="number" min={0} />
+              </div>
+              <div>
+                <label className="field-label">Transmission Type</label>
+                <input className="field-input" type="text" />
+              </div>
+              <div>
+                <label className="field-label">Auction Grade</label>
+                <input className="field-input" type="text" />
+              </div>
+              <div>
+                <label className="field-label">Stock ID</label>
+                <input className="field-input" type="text" />
+              </div>
+              <div>
+                <label className="field-label">Mileage Unit</label>
+                <select className="field-input">
+                  <option value="">Select…</option>
+                  <option>km</option>
+                  <option>miles</option>
+                </select>
+              </div>
+              <div>
+                <label className="field-label">Availability Status</label>
+                <select className="field-input">
+                  <option value="">Select…</option>
+                  <option>Available</option>
+                  <option>Reserved</option>
+                  <option>Sold</option>
+                </select>
               </div>
             </div>
 
-            {/* Section: Auction Intelligence */}
-            <div className="col-span-12 precision-grid-cell">
-              <div className="precision-section-header">
-                <TrendingUp className="w-4 h-4 text-primary" />
-                <h2 className="text-label-caps text-slate-600">Auction Intelligence</h2>
+            {/* Image fields */}
+            <div className="section-grid section-grid-2" style={{ marginBottom: 16 }}>
+              <div>
+                <label className="field-label" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <ImageIcon style={{ width: 11, height: 11 }} />
+                  Main Image URL
+                </label>
+                <input className="field-input" type="url" placeholder="https://…" />
               </div>
-              <div className="grid grid-cols-4 gap-4">
-                <div>
-                  <label className="precision-label">Market Value Coefficient</label>
-                  <input className="precision-input" type="number" step="0.01" />
-                </div>
-                <div>
-                  <label className="precision-label">Competitor Saturation</label>
-                  <div className="h-8 flex items-center">
-                    <input className="w-full accent-primary h-1.5 bg-line rounded-lg appearance-none cursor-pointer" type="range" />
-                  </div>
-                </div>
-                <div>
-                  <label className="precision-label">Historical Trend</label>
-                  <select className="precision-input">
-                    <option>Appreciating (High)</option>
-                    <option>Stable</option>
-                    <option>Depreciating (Standard)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="precision-label">Auction ID</label>
-                  <input className="precision-input" placeholder="AUC-XXXXX" type="text" />
-                </div>
+              <div>
+                <label className="field-label">Additional Images</label>
+                <textarea
+                  className="field-input"
+                  style={{ minHeight: 68 }}
+                  placeholder="JSON or newline-separated URLs"
+                />
               </div>
             </div>
 
-            {/* Section: Structural Engineering */}
-            <div className="col-span-6 precision-grid-cell">
-              <div className="precision-section-header">
-                <DraftingCompass className="w-4 h-4 text-primary" />
-                <h2 className="text-label-caps text-slate-600">Structural Engineering</h2>
-              </div>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="precision-label">Chassis Type</label>
-                    <input className="precision-input" type="text" />
-                  </div>
-                  <div>
-                    <label className="precision-label">Material Composition</label>
-                    <select className="precision-input">
-                      <option>Aluminium-Magnesium</option>
-                      <option>High-Tensile Steel</option>
-                      <option>Carbon Composite</option>
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="precision-label">Structural Integrity Notes</label>
-                  <textarea className="precision-input h-20 py-2 resize-none" />
-                </div>
-              </div>
+            <div style={{ marginBottom: 14 }}>
+              <label className="field-label">Description</label>
+              <textarea className="field-input" style={{ minHeight: 80 }} />
             </div>
 
-            {/* Section: Mechanical Calibration */}
-            <div className="col-span-6 precision-grid-cell">
-              <div className="precision-section-header">
-                <Settings2 className="w-4 h-4 text-primary" />
-                <h2 className="text-label-caps text-slate-600">Mechanical Calibration</h2>
-              </div>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="precision-label">Powertrain Config</label>
-                    <input className="precision-input" type="text" defaultValue="V8-TWIN-TURBO" />
-                  </div>
-                  <div>
-                    <label className="precision-label">Calibration Status</label>
-                    <div className="flex items-center h-8 gap-4">
-                      <label className="flex items-center gap-2 text-[12px] cursor-pointer">
-                        <input className="w-3.5 h-3.5 text-primary focus:ring-0" name="cal" type="radio" defaultChecked /> 
-                        <span>Pass</span>
-                      </label>
-                      <label className="flex items-center gap-2 text-[12px] cursor-pointer">
-                        <input className="w-3.5 h-3.5 text-primary focus:ring-0" name="cal" type="radio" /> 
-                        <span>Pending</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <label className="precision-label">Transmission Ratio Map</label>
-                  <div className="grid grid-cols-4 gap-[1px] bg-line border border-line">
-                    <input className="h-8 bg-white text-center text-[11px] outline-none focus:bg-primary-container/10" placeholder="1st" type="text" />
-                    <input className="h-8 bg-white text-center text-[11px] outline-none focus:bg-primary-container/10" placeholder="2nd" type="text" />
-                    <input className="h-8 bg-white text-center text-[11px] outline-none focus:bg-primary-container/10" placeholder="3rd" type="text" />
-                    <input className="h-8 bg-white text-center text-[11px] outline-none focus:bg-primary-container/10" placeholder="4th" type="text" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Section: Dimensional Ledger */}
-            <div className="col-span-12 precision-grid-cell bg-surface-container-high!">
-              <div className="precision-section-header">
-                <Ruler className="w-4 h-4 text-primary" />
-                <h2 className="text-label-caps text-slate-600">Dimensional Ledger</h2>
-              </div>
-              <div className="grid grid-cols-6 gap-4">
-                <DimensionField label="Wheelbase (mm)" />
-                <DimensionField label="Overall Width" />
-                <DimensionField label="Curb Weight" />
-                <DimensionField label="Drag Coeff." />
-                <DimensionField label="Ground Clear." />
-                <DimensionField label="Cargo Cap." />
-              </div>
+            <div>
+              <label className="field-label">Extra Details</label>
+              <textarea className="field-input" style={{ minHeight: 64 }} />
             </div>
           </div>
+        </div>
 
-          {/* Audit Trail */}
-          <div className="mt-8">
-            <h3 className="text-label-caps text-outline uppercase mb-2">Audit Trail</h3>
-            <div className="bg-white border border-line divide-y divide-line overflow-hidden">
-              <AuditRow label="System initialized ledger record" time="2023-11-24 09:12:44" />
-              <AuditRow 
-                label={<span>VIN Validation Service: <span className="text-primary font-bold">SUCCESS</span></span>} 
-                time="2023-11-24 09:12:45" 
-                secondary 
-              />
-            </div>
+        {/* ── Audit Trail ───────────────────────────────── */}
+        <div className="audit-card">
+          <div className="audit-card-header">
+            <Shield style={{ width: 13, height: 13, color: '#64748b' }} />
+            Audit Trail
           </div>
-        </main>
+          <AuditRow
+            label="System initialized ledger record"
+            time="2023-11-24 09:12:44"
+            dotColor="#94a3b8"
+          />
+          <AuditRow
+            label={<span>Chassis validation: <span style={{ color: '#16a34a', fontWeight: 700 }}>SUCCESS</span></span>}
+            time="2023-11-24 09:12:45"
+            dotColor="#1d4ed8"
+            highlight
+          />
+        </div>
+
+      </main>
+    </div>
+  );
+}
+
+/* ── Sub-components ────────────────────────────────────── */
+
+function NavLink({ icon, label, active, onClick }: {
+  icon: ReactNode; label: string; active?: boolean; onClick: () => void;
+}) {
+  return (
+    <button onClick={onClick} className={`nav-link${active ? ' active' : ''}`}>
+      <span className="nav-icon" style={{ display: 'flex', alignItems: 'center' }}>
+        {icon}
+      </span>
+      {label}
+    </button>
+  );
+}
+
+function FlagCheckbox({ label }: { label: string }) {
+  return (
+    <label className="check-pill">
+      <input type="checkbox" />
+      {label}
+    </label>
+  );
+}
+
+function AuditRow({
+  label, time, dotColor, highlight,
+}: {
+  label: ReactNode;
+  time: string;
+  dotColor?: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div className="audit-row" style={{ background: highlight ? '#fafcff' : undefined }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div
+          className="audit-dot"
+          style={{
+            background: dotColor ?? '#cbd5e1',
+            boxShadow: highlight ? `0 0 0 3px ${dotColor}20` : undefined,
+          }}
+        />
+        <span className="audit-label">{label}</span>
       </div>
+      <span className="audit-time">{time}</span>
     </div>
   );
 }
-
-function HeaderButton({ icon }: { icon: ReactNode }) {
-  return (
-    <button className="w-8 h-8 flex items-center justify-center text-slate-600 hover:bg-slate-100 hover:text-primary transition-all rounded-sm cursor-pointer">
-      {icon}
-    </button>
-  );
-}
-
-function SidebarLink({ icon, label, active, onClick }: { icon: ReactNode, label: string, active?: boolean, onClick: () => void }) {
-  return (
-    <button 
-      onClick={onClick}
-      className={`flex items-center gap-3 px-6 py-2.5 text-[12px] font-semibold uppercase tracking-tight transition-colors w-full text-left ${
-        active 
-          ? 'bg-white text-primary border-l-2 border-primary' 
-          : 'text-slate-500 hover:bg-slate-200 hover:text-slate-900'
-      }`}
-    >
-      {icon}
-      <span>{label}</span>
-    </button>
-  );
-}
-
-function Badge({ children, color }: { children: ReactNode, color: 'blue' | 'slate' | 'orange' }) {
-  const styles = {
-    blue: 'bg-primary-container/20 text-primary border-primary/30',
-    slate: 'bg-slate-100 text-slate-600 border-line',
-    orange: 'bg-orange-100 text-orange-700 border-orange-200'
-  };
-  
-  return (
-    <span className={`px-2 py-1 text-[10px] font-bold uppercase border rounded-[2px] ${styles[color]}`}>
-      {children}
-    </span>
-  );
-}
-
-function DimensionField({ label }: { label: string }) {
-  return (
-    <div>
-      <label className="precision-label">{label}</label>
-      <input className="precision-input" type="number" />
-    </div>
-  );
-}
-
-function AuditRow({ label, time, secondary }: { label: ReactNode, time: string, secondary?: boolean }) {
-  return (
-    <div className={`flex items-center justify-between p-2 text-body-sm ${secondary ? 'bg-surface-container-low' : ''}`}>
-      <span className="text-slate-600">{label}</span>
-      <span className="text-outline font-mono text-[11px]">{time}</span>
-    </div>
-  );
-}
-
-
