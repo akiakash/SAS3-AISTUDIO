@@ -12,7 +12,9 @@ import {
   Zap, Shield, Plus, Eye, Pencil, Trash2, Filter,
   Download, ArrowUpDown, CheckCircle2, Clock, XCircle,
   Truck, ChevronDown, ChevronUp, MapPin, DollarSign, CalendarDays, PackageCheck,
+  Layers,
 } from 'lucide-react';
+import ManagePage from './ManagePage';
 
 /* ── Dummy Data ─────────────────────────────────────── */
 const VEHICLES = [
@@ -180,6 +182,12 @@ export default function App() {
             active={activeTab === 'mech'}
             onClick={() => setActiveTab('mech')}
           />
+          <NavLink
+            icon={<Layers />}
+            label="Manage"
+            active={activeTab === 'manage'}
+            onClick={() => setActiveTab('manage')}
+          />
         </div>
 
         <div className="sidebar-footer">
@@ -198,7 +206,9 @@ export default function App() {
       {/* ── Main Content ─────────────────────────────────── */}
       <main className="main-content">
 
-        {view === 'list' ? (
+        {activeTab === 'manage' ? (
+          <ManagePage />
+        ) : view === 'list' ? (
           /* ════ INVENTORY LIST VIEW ════ */
           <>
             {/* Page Header */}
