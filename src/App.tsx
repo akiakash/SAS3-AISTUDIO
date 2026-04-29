@@ -82,6 +82,7 @@ export default function App() {
   const [view, setView] = useState<'list' | 'form'>('list');
   const [search, setSearch] = useState('');
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
+  const [expandedNav, setExpandedNav] = useState<string | null>(null);
 
   const filtered = VEHICLES.filter(v =>
     `${v.make} ${v.model} ${v.chassis} ${v.stock}`.toLowerCase().includes(search.toLowerCase())
@@ -159,12 +160,6 @@ export default function App() {
             onClick={() => setActiveTab('dashboard')}
           />
           <NavLink
-            icon={<Car />}
-            label="Inventory"
-            active={activeTab === 'inventory'}
-            onClick={() => setActiveTab('inventory')}
-          />
-          <NavLink
             icon={<TrendingUp />}
             label="Auction Intel"
             active={activeTab === 'intel'}
@@ -182,12 +177,38 @@ export default function App() {
             active={activeTab === 'mech'}
             onClick={() => setActiveTab('mech')}
           />
-          <NavLink
-            icon={<Layers />}
-            label="Manage"
-            active={activeTab === 'manage'}
-            onClick={() => setActiveTab('manage')}
-          />
+        </div>
+
+        <div className="sidebar-section-label" style={{ marginTop: 20 }}>Vehicles</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <NavGroup
+            icon={<Car />}
+            label="Vehicles"
+            expanded={expandedNav === 'vehicles'}
+            onToggle={() => setExpandedNav(expandedNav === 'vehicles' ? null : 'vehicles')}
+          >
+            <SubNavLink
+              label="Manage"
+              active={activeTab === 'manage'}
+              onClick={() => setActiveTab('manage')}
+            />
+          </NavGroup>
+        </div>
+
+        <div className="sidebar-section-label" style={{ marginTop: 20 }}>Orders</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <NavGroup
+            icon={<ClipboardList />}
+            label="Orders"
+            expanded={expandedNav === 'orders'}
+            onToggle={() => setExpandedNav(expandedNav === 'orders' ? null : 'orders')}
+          >
+            <SubNavLink
+              label="Inventory"
+              active={activeTab === 'inventory'}
+              onClick={() => setActiveTab('inventory')}
+            />
+          </NavGroup>
         </div>
 
         <div className="sidebar-footer">
@@ -829,6 +850,47 @@ function NavLink({ icon, label, active, onClick }: {
       <span className="nav-icon" style={{ display: 'flex', alignItems: 'center' }}>
         {icon}
       </span>
+      {label}
+    </button>
+  );
+}
+
+function NavGroup({ icon, label, expanded, onToggle, children }: {
+  icon: ReactNode; label: string; expanded: boolean; onToggle: () => void; children: ReactNode;
+}) {
+  return (
+    <div className="nav-group">
+      <button onClick={onToggle} className={`nav-link nav-group-toggle${expanded ? ' expanded' : ''}`}>
+        <span className="nav-icon" style={{ display: 'flex', alignItems: 'center' }}>
+          {icon}
+        </span>
+        {label}
+        <ChevronRight
+          className="nav-group-chevron"
+          style={{
+            width: 13, height: 13,
+            marginLeft: 'auto',
+            transition: 'transform 0.2s ease',
+            transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
+            color: '#94a3b8',
+          }}
+        />
+      </button>
+      {expanded && (
+        <div className="nav-group-children">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SubNavLink({ label, active, onClick }: {
+  label: string; active?: boolean; onClick: () => void;
+}) {
+  return (
+    <button onClick={onClick} className={`nav-sublink${active ? ' active' : ''}`}>
+      <span className="nav-sublink-dot" />
       {label}
     </button>
   );

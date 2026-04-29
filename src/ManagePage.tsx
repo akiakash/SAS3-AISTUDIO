@@ -323,8 +323,8 @@ export default function ManagePage() {
       {/* ── Page Header ──────────────────────────── */}
       <div className="manage-header">
         <div>
-          <div className="manage-eyebrow">Manage</div>
-          <h1 className="manage-title">Vehicle Management</h1>
+          <div className="manage-eyebrow">Vehicles</div>
+          <h1 className="manage-title">Vehicles</h1>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <button className="manage-btn manage-btn-outline">
