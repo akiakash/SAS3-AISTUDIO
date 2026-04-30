@@ -15,6 +15,8 @@ import {
   Layers,
 } from 'lucide-react';
 import ManagePage from './ManagePage';
+import InvoicesPage from './InvoicesPage';
+import UsedVehiclesPage from './UsedVehiclesPage';
 
 /* ── Dummy Data ─────────────────────────────────────── */
 const VEHICLES = [
@@ -208,6 +210,16 @@ export default function App() {
               active={activeTab === 'inventory'}
               onClick={() => setActiveTab('inventory')}
             />
+            <SubNavLink
+              label="Invoice"
+              active={activeTab === 'invoice'}
+              onClick={() => setActiveTab('invoice')}
+            />
+            <SubNavLink
+              label="Used Vehicles"
+              active={activeTab === 'used_vehicles'}
+              onClick={() => setActiveTab('used_vehicles')}
+            />
           </NavGroup>
         </div>
 
@@ -224,11 +236,14 @@ export default function App() {
         </div>
       </nav>
 
-      {/* ── Main Content ─────────────────────────────────── */}
       <main className="main-content">
 
         {activeTab === 'manage' ? (
           <ManagePage />
+        ) : activeTab === 'invoice' ? (
+          <InvoicesPage />
+        ) : activeTab === 'used_vehicles' ? (
+          <UsedVehiclesPage />
         ) : view === 'list' ? (
           /* ════ INVENTORY LIST VIEW ════ */
           <>
