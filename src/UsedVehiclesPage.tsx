@@ -56,9 +56,9 @@ export default function UsedVehiclesPage() {
 
       {/* ── Stats Bar ────────────────────────────── */}
       <div style={{ display: 'flex', gap: 16, marginBottom: 24 }}>
-        <StatCard icon={<Car />} label="Total Entries" value="50,197" color="#1d4ed8" />
-        <StatCard icon={<Layers />} label="Sri Lanka Stock" value="32,450" color="#16a34a" />
-        <StatCard icon={<MapPin />} label="Japan Stock" value="17,747" color="#ea580c" />
+        <StatCard icon={<Car />} label="Total Entries" value="50,197" color="#2563eb" />
+        <StatCard icon={<Layers />} label="Sri Lanka Stock" value="32,450" color="#36b37e" />
+        <StatCard icon={<MapPin />} label="Japan Stock" value="17,747" color="#ffab00" />
       </div>
 
       {/* ── Search & Filter ──────────────────────── */}
@@ -105,7 +105,7 @@ export default function UsedVehiclesPage() {
           <tbody>
             {DUMMY_USED.map(v => (
               <tr key={v.id}>
-                <td style={{ fontWeight: 700, color: '#1d4ed8' }}>{v.id}</td>
+                <td style={{ fontWeight: 700, color: '#2563eb' }}>{v.id}</td>
                 <td>
                   <div style={{ fontWeight: 600, fontSize: 13 }}>{v.model}</div>
                   <div style={{ fontSize: 11, color: '#94a3b8', textTransform: 'uppercase' }}>CHASSIS READY</div>
@@ -144,8 +144,12 @@ export default function UsedVehiclesPage() {
                 </td>
                 <td>
                   <div style={{ display: 'flex', gap: 6 }}>
-                    <button className="icon-btn-sm"><Pencil style={{ width: 12, height: 12 }} /></button>
-                    <button className="icon-btn-sm"><Trash2 style={{ width: 12, height: 12, color: '#dc2626' }} /></button>
+                    <button className="action-btn action-btn-edit" title="Edit">
+                      <Pencil style={{ width: 14, height: 14 }} />
+                    </button>
+                    <button className="action-btn action-btn-delete" title="Delete">
+                      <Trash2 style={{ width: 14, height: 14 }} />
+                    </button>
                   </div>
                 </td>
               </tr>

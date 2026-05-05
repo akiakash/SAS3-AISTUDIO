@@ -273,7 +273,7 @@ const MANAGED_VEHICLES: ManagedVehicle[] = [
 const STATUS_CONFIG: Record<string, { bg: string; color: string; border: string; label: string }> = {
   'Now On Sale': { bg: '#f0fdf4', color: '#16a34a', border: '#bbf7d0', label: 'Now On Sale' },
   'Deactive':    { bg: '#fef2f2', color: '#dc2626', border: '#fecaca', label: 'Deactive' },
-  'Sold':        { bg: '#f8fafc', color: '#64748b', border: '#e2e8f0', label: 'Sold' },
+  'Sold':        { bg: '#f4f5f7', color: '#6b778c', border: '#ebecf0', label: 'Sold' },
   'Reserved':    { bg: '#fffbeb', color: '#d97706', border: '#fde68a', label: 'Reserved' },
 };
 

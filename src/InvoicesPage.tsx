@@ -100,7 +100,7 @@ export default function InvoicesPage() {
           <tbody>
             {DUMMY_INVOICES.map(inv => (
               <tr key={inv.id}>
-                <td style={{ fontWeight: 700, color: '#1d4ed8' }}>{inv.stockId}</td>
+                <td style={{ fontWeight: 700, color: '#2563eb' }}>{inv.stockId}</td>
                 <td>
                   <span className={`badge badge-${inv.status.toLowerCase()}`}>
                     {inv.status}
@@ -117,16 +117,19 @@ export default function InvoicesPage() {
                 <td>{inv.shipName || '—'}</td>
                 <td>
                   <div style={{ display: 'flex', gap: 6 }}>
-                    <button className="icon-btn-sm" title="View Detail"><Eye style={{ width: 14, height: 14 }} /></button>
+                    <button className="action-btn action-btn-view" title="View Detail">
+                      <Eye style={{ width: 14, height: 14 }} />
+                    </button>
                     <button 
-                      className="icon-btn-sm" 
-                      title="Create/Edit Invoice" 
-                      style={{ color: '#1d4ed8', background: '#eff6ff', borderColor: '#dbeafe' }}
+                      className="action-btn action-btn-edit" 
+                      title="Create/Edit Invoice"
                       onClick={() => handleOpenDrawer(inv)}
                     >
-                      <Receipt style={{ width: 14, height: 14 }} />
+                      <FileText style={{ width: 14, height: 14 }} />
                     </button>
-                    <button className="icon-btn-sm" title="Delete" style={{ color: '#dc2626' }}><Trash2 style={{ width: 14, height: 14 }} /></button>
+                    <button className="action-btn action-btn-delete" title="Delete">
+                      <Trash2 style={{ width: 14, height: 14 }} />
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -142,8 +145,8 @@ export default function InvoicesPage() {
             {/* Drawer Header */}
             <div className="drawer-header">
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#1d4ed8', fontSize: 12, fontWeight: 700, marginBottom: 4 }}>
-                  <Receipt style={{ width: 14, height: 14 }} /> 
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#2563eb', fontSize: 12, fontWeight: 700, marginBottom: 4 }}>
+                  <FileText style={{ width: 14, height: 14 }} /> 
                   INVOICE MANAGEMENT
                 </div>
                 <h2 className="modal-title" style={{ fontSize: 24 }}>
@@ -181,7 +184,7 @@ export default function InvoicesPage() {
                   </div>
                   <div className="field">
                     <label className="field-label">Customer / Client</label>
-                    <div className="customer-box" style={{ background: '#f8fafc', padding: 20 }}>
+                    <div className="customer-box" style={{ background: '#f4f5f7', padding: 20 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
                         <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyCenter: 'center', border: '1px solid #e2e8f0' }}>
                           <User style={{ width: 20, height: 20, color: '#64748b' }} />

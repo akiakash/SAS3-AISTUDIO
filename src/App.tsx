@@ -39,9 +39,9 @@ const STATUS_STYLE: Record<string, { bg: string; color: string; border: string; 
 /* Transport status styles */
 const T_STATUS: Record<string, { bg: string; color: string; border: string }> = {
   'Delivered':   { bg: '#f0fdf4', color: '#16a34a', border: '#bbf7d0' },
-  'In Transit':  { bg: '#eff6ff', color: '#1d4ed8', border: '#bfdbfe' },
+  'In Transit':  { bg: '#eff6ff', color: '#2563eb', border: '#bfdbfe' },
   'Pending':     { bg: '#fffbeb', color: '#d97706', border: '#fde68a' },
-  'Awaiting':    { bg: '#f8fafc', color: '#64748b', border: '#e2e8f0' },
+  'Awaiting':    { bg: '#f4f5f7', color: '#6b778c', border: '#dfe1e6' },
 };
 
 /* Transport dummy data — multiple per vehicle */
@@ -110,7 +110,7 @@ export default function App() {
           </div>
 
           {/* Divider */}
-          <div style={{ width: 1, height: 24, background: '#e2e8f0' }} />
+          <div style={{ width: 1, height: 24, background: '#ebecf0' }} />
 
           <div className="topbar-search-wrap">
             <Search style={{
@@ -161,24 +161,7 @@ export default function App() {
             active={activeTab === 'dashboard'}
             onClick={() => setActiveTab('dashboard')}
           />
-          <NavLink
-            icon={<TrendingUp />}
-            label="Auction Intel"
-            active={activeTab === 'intel'}
-            onClick={() => setActiveTab('intel')}
-          />
-          <NavLink
-            icon={<DraftingCompass />}
-            label="Engineering"
-            active={activeTab === 'eng'}
-            onClick={() => setActiveTab('eng')}
-          />
-          <NavLink
-            icon={<Settings2 />}
-            label="Mechanical"
-            active={activeTab === 'mech'}
-            onClick={() => setActiveTab('mech')}
-          />
+
         </div>
 
         <div className="sidebar-section-label" style={{ marginTop: 20 }}>Vehicles</div>
@@ -267,15 +250,15 @@ export default function App() {
             {/* Stats row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5,1fr)', gap: 14, marginBottom: 20 }}>
               {[
-                { label: 'Total Vehicles', value: counts.total,       color: '#1d4ed8', border: '#dbeafe' },
-                { label: 'Available',      value: counts.available,   color: '#16a34a', border: '#bbf7d0' },
-                { label: 'Reserved',       value: counts.reserved,    color: '#d97706', border: '#fde68a' },
-                { label: 'Sold',           value: counts.sold,        color: '#dc2626', border: '#fecaca' },
-                { label: 'Transports',     value: totalTransports,    color: '#7c3aed', border: '#ddd6fe' },
+                { label: 'Total Vehicles', value: counts.total,       color: '#2563eb', border: '#bfdbfe' },
+                { label: 'Available',      value: counts.available,   color: '#36b37e', border: '#bbf7d0' },
+                { label: 'Reserved',       value: counts.reserved,    color: '#ffab00', border: '#fde68a' },
+                { label: 'Sold',           value: counts.sold,        color: '#ff5630', border: '#fecaca' },
+                { label: 'Transports',     value: totalTransports,    color: '#6554c0', border: '#ddd6fe' },
               ].map(s => (
                 <div key={s.label} style={{
-                  background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12,
-                  padding: '16px 20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+                  background: '#fff', border: '1px solid #ebecf0', borderRadius: 12,
+                  padding: '16px 20px', boxShadow: 'none',
                   borderLeft: `3px solid ${s.color}`,
                 }}>
                   <div style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>{s.label}</div>
@@ -289,18 +272,18 @@ export default function App() {
               {/* Table toolbar */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 20px', borderBottom: '1px solid #f1f5f9' }}>
                 <div style={{ position: 'relative', flex: 1, maxWidth: 280 }}>
-                  <Search style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', width: 13, height: 13, color: '#94a3b8' }} />
+                  <Search style={{ position: 'absolute', left: 9, top: '50%', transform: 'translateY(-50%)', width: 13, height: 13, color: '#6b778c' }} />
                   <input
-                    style={{ width: '100%', height: 32, paddingLeft: 30, paddingRight: 10, border: '1px solid #e2e8f0', borderRadius: 7, fontSize: 12.5, fontFamily: 'inherit', outline: 'none', color: '#0f172a', background: '#f8fafc' }}
+                    style={{ width: '100%', height: 32, paddingLeft: 30, paddingRight: 10, border: '1px solid #dfe1e6', borderRadius: 7, fontSize: 12.5, fontFamily: 'inherit', outline: 'none', color: '#172b4d', background: '#f4f5f7' }}
                     placeholder="Search vehicles…"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                   />
                 </div>
-                <button className="topbar-icon-btn" title="Filter" style={{ border: '1px solid #e2e8f0', borderRadius: 7 }}>
+                <button className="topbar-icon-btn" title="Filter" style={{ border: '1px solid #dfe1e6', borderRadius: 7 }}>
                   <Filter style={{ width: 14, height: 14 }} />
                 </button>
-                <button className="topbar-icon-btn" title="Sort" style={{ border: '1px solid #e2e8f0', borderRadius: 7 }}>
+                <button className="topbar-icon-btn" title="Sort" style={{ border: '1px solid #dfe1e6', borderRadius: 7 }}>
                   <ArrowUpDown style={{ width: 14, height: 14 }} />
                 </button>
                 <span style={{ fontSize: 11.5, color: '#94a3b8', marginLeft: 'auto' }}>{filtered.length} result{filtered.length !== 1 ? 's' : ''}</span>
@@ -310,7 +293,7 @@ export default function App() {
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
                   <thead>
-                    <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                    <tr style={{ background: '#f4f5f7', borderBottom: '1px solid #ebecf0' }}>
                       {['', 'Stock ID','Make / Model','Chassis No.','Year','Fuel','Mileage','Grade','Price (¥)','Status','Actions'].map(h => (
                         <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 600, color: '#64748b', fontSize: 11, letterSpacing: '0.04em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>{h}</th>
                       ))}
@@ -321,12 +304,12 @@ export default function App() {
                       const s = STATUS_STYLE[v.status];
                       const transports = TRANSPORTS[v.id] ?? [];
                       const isExpanded = expandedRow === v.id;
-                      const rowBg = i % 2 === 1 ? '#fafcff' : '#fff';
+                      const rowBg = i % 2 === 1 ? '#fafbfc' : '#fff';
                       return (
                         <React.Fragment key={v.id}>
                           {/* Main vehicle row */}
-                          <tr style={{ borderBottom: isExpanded ? 'none' : '1px solid #f1f5f9', background: isExpanded ? '#f0f6ff' : rowBg, transition: 'background 0.12s' }}
-                            onMouseEnter={e => { if (!isExpanded) e.currentTarget.style.background = '#f0f6ff'; }}
+                          <tr style={{ borderBottom: isExpanded ? 'none' : '1px solid #f4f5f7', background: isExpanded ? '#f0f6f7' : rowBg, transition: 'background 0.12s' }}
+                            onMouseEnter={e => { if (!isExpanded) e.currentTarget.style.background = '#f0f6f7'; }}
                             onMouseLeave={e => { if (!isExpanded) e.currentTarget.style.background = rowBg; }}
                           >
                             {/* Expand toggle */}
@@ -336,8 +319,8 @@ export default function App() {
                                 title={isExpanded ? 'Collapse transports' : `View ${transports.length} transport(s)`}
                                 style={{
                                   width: 24, height: 24, borderRadius: 6, border: '1px solid #e2e8f0',
-                                  background: isExpanded ? '#1d4ed8' : '#f8fafc',
-                                  color: isExpanded ? '#fff' : '#64748b',
+                                  background: isExpanded ? '#2563eb' : '#f4f5f7',
+                                  color: isExpanded ? '#fff' : '#6b778c',
                                   cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                                   transition: 'all 0.15s', position: 'relative',
                                 }}
@@ -358,7 +341,7 @@ export default function App() {
                                 )}
                               </button>
                             </td>
-                            <td style={{ padding: '12px 16px', fontWeight: 600, color: '#1d4ed8', fontFamily: 'monospace', fontSize: 12 }}>{v.stock}</td>
+                            <td style={{ padding: '12px 16px', fontWeight: 600, color: '#2563eb', fontFamily: 'monospace', fontSize: 12 }}>{v.stock}</td>
                             <td style={{ padding: '12px 16px' }}>
                               <div style={{ fontWeight: 600, color: '#0f172a' }}>{v.make} {v.model}</div>
                               <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 2 }}>{v.color}</div>
@@ -368,7 +351,7 @@ export default function App() {
                             <td style={{ padding: '12px 16px', color: '#475569' }}>{v.fuel}</td>
                             <td style={{ padding: '12px 16px', color: '#475569' }}>{v.mileage.toLocaleString()} km</td>
                             <td style={{ padding: '12px 16px' }}>
-                              <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 6, background: '#eff6ff', border: '1px solid #dbeafe', fontWeight: 800, fontSize: 12, color: '#1d4ed8' }}>{v.grade}</span>
+                               <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 6, background: '#eff6ff', border: '1px solid #bfdbfe', fontWeight: 800, fontSize: 12, color: '#2563eb' }}>{v.grade}</span>
                             </td>
                             <td style={{ padding: '12px 16px', fontWeight: 600, color: '#0f172a' }}>¥{v.price.toLocaleString()}</td>
                             <td style={{ padding: '12px 16px' }}>
@@ -377,10 +360,16 @@ export default function App() {
                               </span>
                             </td>
                             <td style={{ padding: '12px 16px' }}>
-                              <div style={{ display: 'flex', gap: 4 }}>
-                                <button className="topbar-icon-btn" title="View" style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #e2e8f0' }}><Eye style={{ width: 13, height: 13 }} /></button>
-                                <button className="topbar-icon-btn" title="Edit" style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #e2e8f0' }} onClick={() => setView('form')}><Pencil style={{ width: 13, height: 13 }} /></button>
-                                <button className="topbar-icon-btn" title="Delete" style={{ width: 28, height: 28, borderRadius: 6, border: '1px solid #fee2e2', color: '#dc2626' }}><Trash2 style={{ width: 13, height: 13 }} /></button>
+                              <div style={{ display: 'flex', gap: 6 }}>
+                                <button className="action-btn action-btn-view" title="View">
+                                  <Eye style={{ width: 14, height: 14 }} />
+                                </button>
+                                <button className="action-btn action-btn-edit" title="Edit" onClick={() => setView('form')}>
+                                  <Pencil style={{ width: 14, height: 14 }} />
+                                </button>
+                                <button className="action-btn action-btn-delete" title="Delete">
+                                  <Trash2 style={{ width: 14, height: 14 }} />
+                                </button>
                               </div>
                             </td>
                           </tr>
@@ -388,7 +377,7 @@ export default function App() {
                           {/* Transport sub-rows (expanded) */}
                           {isExpanded && (
                             <tr>
-                              <td colSpan={11} style={{ padding: 0, background: '#f8faff', borderBottom: '2px solid #dbeafe' }}>
+                              <td colSpan={11} style={{ padding: 0, background: '#f4f5f7', borderBottom: '2px solid #bfdbfe' }}>
                                 {/* Transport section header */}
                                 <div style={{
                                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -397,15 +386,15 @@ export default function App() {
                                   background: '#eef3ff',
                                 }}>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                    <Truck style={{ width: 13, height: 13, color: '#4f46e5' }} />
-                                    <span style={{ fontSize: 11, fontWeight: 700, color: '#4f46e5', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                                    <Truck style={{ width: 13, height: 13, color: '#2563eb' }} />
+                                    <span style={{ fontSize: 11, fontWeight: 700, color: '#2563eb', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                                       Transports — {v.make} {v.model} ({v.stock})
                                     </span>
                                     <span style={{ fontSize: 10, fontWeight: 600, color: '#7c3aed', background: '#ede9fe', border: '1px solid #ddd6fe', padding: '1px 7px', borderRadius: 100 }}>
                                       {transports.length} record{transports.length !== 1 ? 's' : ''}
                                     </span>
                                   </div>
-                                  <button style={{ display: 'flex', alignItems: 'center', gap: 5, height: 28, padding: '0 10px', border: '1px solid #c7d2fe', borderRadius: 6, background: '#fff', color: '#4f46e5', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
+                                  <button style={{ display: 'flex', alignItems: 'center', gap: 5, height: 28, padding: '0 10px', border: '1px solid #bfdbfe', borderRadius: 6, background: '#fff', color: '#2563eb', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
                                     <Plus style={{ width: 11, height: 11 }} /> Add Transport
                                   </button>
                                 </div>
@@ -461,9 +450,13 @@ export default function App() {
                                             {t.notes || '—'}
                                           </td>
                                           <td style={{ padding: '10px 16px' }}>
-                                            <div style={{ display: 'flex', gap: 4 }}>
-                                              <button className="topbar-icon-btn" style={{ width: 26, height: 26, borderRadius: 5, border: '1px solid #e2e8f0' }}><Pencil style={{ width: 11, height: 11 }} /></button>
-                                              <button className="topbar-icon-btn" style={{ width: 26, height: 26, borderRadius: 5, border: '1px solid #fee2e2', color: '#dc2626' }}><Trash2 style={{ width: 11, height: 11 }} /></button>
+                                            <div style={{ display: 'flex', gap: 6 }}>
+                                              <button className="action-btn action-btn-edit" title="Edit">
+                                                <Pencil style={{ width: 14, height: 14 }} />
+                                              </button>
+                                              <button className="action-btn action-btn-delete" title="Delete">
+                                                <Trash2 style={{ width: 14, height: 14 }} />
+                                              </button>
                                             </div>
                                           </td>
                                         </tr>
@@ -496,7 +489,7 @@ export default function App() {
                 <span style={{ fontSize: 12, color: '#94a3b8' }}>Showing {filtered.length} of {counts.total} entries</span>
                 <div style={{ display: 'flex', gap: 4 }}>
                   {['Prev','1','2','Next'].map(p => (
-                    <button key={p} style={{ height: 30, minWidth: 30, padding: '0 10px', borderRadius: 6, border: '1px solid #e2e8f0', background: p === '1' ? '#1d4ed8' : '#fff', color: p === '1' ? '#fff' : '#475569', fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}>{p}</button>
+                    <button key={p} style={{ height: 30, minWidth: 30, padding: '0 10px', borderRadius: 6, border: '1px solid #ebecf0', background: p === '1' ? '#2563eb' : '#fff', color: p === '1' ? '#fff' : '#42526e', fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}>{p}</button>
                   ))}
                 </div>
               </div>
@@ -509,7 +502,7 @@ export default function App() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
               <div>
                 <div className="page-eyebrow">
-                  <button onClick={() => setView('list')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#1d4ed8', fontWeight: 600, fontSize: 12, padding: 0, fontFamily: 'inherit' }}>Inventory</button>
+                  <button onClick={() => setView('list')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#2563eb', fontWeight: 600, fontSize: 12, padding: 0, fontFamily: 'inherit' }}>Inventory</button>
                   <ChevronRight style={{ width: 12, height: 12 }} />
                   <span>New Entry</span>
                 </div>
@@ -530,7 +523,7 @@ export default function App() {
             <div className="form-section">
               <div className="form-section-header">
                 <div className="form-section-icon">
-                  <Gavel style={{ width: 14, height: 14, color: '#1d4ed8' }} />
+                  <Gavel style={{ width: 14, height: 14, color: '#2563eb' }} />
                 </div>
                 <span className="form-section-title">Auctions</span>
                 <span className="form-section-tag">auctions</span>
@@ -566,7 +559,7 @@ export default function App() {
             <div className="form-section">
               <div className="form-section-header">
                 <div className="form-section-icon">
-                  <ClipboardList style={{ width: 14, height: 14, color: '#1d4ed8' }} />
+                  <ClipboardList style={{ width: 14, height: 14, color: '#2563eb' }} />
                 </div>
                 <span className="form-section-title">Orders</span>
                 <span className="form-section-tag">orders</span>
@@ -616,7 +609,7 @@ export default function App() {
           <div className="form-section">
             <div className="form-section-header">
               <div className="form-section-icon">
-                <Car style={{ width: 14, height: 14, color: '#1d4ed8' }} />
+                <Car style={{ width: 14, height: 14, color: '#2563eb' }} />
               </div>
               <span className="form-section-title">Vehicles</span>
               <span className="form-section-tag">vehicles</span>
@@ -666,7 +659,7 @@ export default function App() {
           <div className="form-section">
             <div className="form-section-header">
               <div className="form-section-icon">
-                <ListChecks style={{ width: 14, height: 14, color: '#1d4ed8' }} />
+                <ListChecks style={{ width: 14, height: 14, color: '#2563eb' }} />
               </div>
               <span className="form-section-title">Vehicle Details</span>
               <span className="form-section-tag">vehicle_details</span>
