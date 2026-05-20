@@ -1,29 +1,11 @@
 import React, { useState } from 'react';
 import {
-  Search, Plus, Download, FileText, Filter, ArrowUpDown,
-  MoreHorizontal, Eye, Pencil, Trash2, X, Save,
-  CreditCard, Ship, User, Building2, Calendar, DollarSign,
-  Info, ChevronDown, CheckCircle2, AlertCircle, FileStack,
-  Receipt, Landmark, Truck, MessageSquare, History,
-  ChevronRight, ArrowRight, Check
+  Search, Plus, Download, FileText, Filter,
+  Eye, Trash2,
 } from 'lucide-react';
+import InvoiceFormModal, { type InvoiceListItem } from './InvoiceFormModal';
 
-interface Invoice {
-  id: number;
-  stockId: string;
-  customerName: string;
-  invoiceDate: string;
-  amount: number;
-  currency: string;
-  status: 'Draft' | 'Final' | 'Proforma';
-  chassisNo: string;
-  model: string;
-  lcNumber: string;
-  shipName: string;
-  client: string;
-}
-
-const DUMMY_INVOICES: Invoice[] = [
+const DUMMY_INVOICES: InvoiceListItem[] = [
   { id: 1, stockId: '32777', customerName: 'Ranasinghe Ent', invoiceDate: '2026-04-29', amount: 2660000, currency: 'JPY', status: 'Draft', chassisNo: 'LA350S-0361108', model: 'DAIHATSU MIRA', lcNumber: 'LC-9982', shipName: 'Global Leader', client: 'ojtjapan' },
   { id: 2, stockId: '32776', customerName: 'R S CAR SALES', invoiceDate: '2026-04-29', amount: 3500000, currency: 'JPY', status: 'Draft', chassisNo: 'A210A-3122', model: 'TOYOTA RAIZE', lcNumber: '', shipName: 'Pioneer', client: 'rscarsales' },
   { id: 3, stockId: '32775', customerName: 'MR. MOHAMED NIZAR', invoiceDate: '2026-04-28', amount: 2880000, currency: 'JPY', status: 'Draft', chassisNo: 'C1DKR-116328', model: 'VW T-CROSS', lcNumber: 'LC-8871', shipName: 'Oceania', client: 'ojtjapan' },
@@ -32,20 +14,28 @@ const DUMMY_INVOICES: Invoice[] = [
 ];
 
 export default function InvoicesPage() {
-  const [showDrawer, setShowDrawer] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [search, setSearch] = useState('');
-  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
-  const [activeStep, setActiveStep] = useState(1);
+  const [selectedInvoice, setSelectedInvoice] = useState<InvoiceListItem | null>(null);
 
-  const handleOpenDrawer = (inv: Invoice | null = null) => {
+  const handleOpenForm = (inv: InvoiceListItem | null = null) => {
     setSelectedInvoice(inv);
-    setActiveStep(1);
-    setShowDrawer(true);
+    setShowForm(true);
   };
+
+  const filtered = DUMMY_INVOICES.filter(inv => {
+    const q = search.toLowerCase();
+    if (!q) return true;
+    return (
+      inv.stockId.toLowerCase().includes(q) ||
+      inv.chassisNo.toLowerCase().includes(q) ||
+      inv.client.toLowerCase().includes(q) ||
+      inv.customerName.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="invoices-page">
-      {/* ── Page Header ──────────────────────────── */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
         <div>
           <div className="page-eyebrow">Orders</div>
@@ -53,16 +43,15 @@ export default function InvoicesPage() {
           <p className="page-subtitle">Manage billing, LC payments, and shipping documentation.</p>
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
-          <button className="btn btn-outline">
+          <button type="button" className="btn btn-outline">
             <Download style={{ width: 14, height: 14 }} /> Export Excel
           </button>
-          <button className="btn btn-primary" onClick={() => handleOpenDrawer()}>
+          <button type="button" className="btn btn-primary" onClick={() => handleOpenForm()}>
             <Plus style={{ width: 14, height: 14 }} /> Create Invoice
           </button>
         </div>
       </div>
 
-      {/* ── Filter Bar ────────────────────────────── */}
       <div className="audit-card" style={{ marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 20px' }}>
           <div style={{ position: 'relative', flex: 1, maxWidth: 320 }}>
@@ -75,13 +64,12 @@ export default function InvoicesPage() {
               onChange={e => setSearch(e.target.value)}
             />
           </div>
-          <button className="btn-sm btn-ghost" style={{ height: 36 }}>
+          <button type="button" className="btn-sm btn-ghost" style={{ height: 36 }}>
             <Filter style={{ width: 14, height: 14 }} /> Filter
           </button>
         </div>
       </div>
 
-      {/* ── Invoices Table ────────────────────────── */}
       <div className="audit-card" style={{ overflowX: 'auto' }}>
         <table className="invoices-table">
           <thead>
@@ -98,7 +86,7 @@ export default function InvoicesPage() {
             </tr>
           </thead>
           <tbody>
-            {DUMMY_INVOICES.map(inv => (
+            {filtered.map(inv => (
               <tr key={inv.id}>
                 <td style={{ fontWeight: 700, color: '#2563eb' }}>{inv.stockId}</td>
                 <td>
@@ -117,17 +105,18 @@ export default function InvoicesPage() {
                 <td>{inv.shipName || '—'}</td>
                 <td>
                   <div style={{ display: 'flex', gap: 6 }}>
-                    <button className="action-btn action-btn-view" title="View Detail">
+                    <button type="button" className="action-btn action-btn-view" title="View Detail" onClick={() => handleOpenForm(inv)}>
                       <Eye style={{ width: 14, height: 14 }} />
                     </button>
-                    <button 
-                      className="action-btn action-btn-edit" 
+                    <button
+                      type="button"
+                      className="action-btn action-btn-edit"
                       title="Create/Edit Invoice"
-                      onClick={() => handleOpenDrawer(inv)}
+                      onClick={() => handleOpenForm(inv)}
                     >
                       <FileText style={{ width: 14, height: 14 }} />
                     </button>
-                    <button className="action-btn action-btn-delete" title="Delete">
+                    <button type="button" className="action-btn action-btn-delete" title="Delete">
                       <Trash2 style={{ width: 14, height: 14 }} />
                     </button>
                   </div>
@@ -138,177 +127,11 @@ export default function InvoicesPage() {
         </table>
       </div>
 
-      {/* ── Professional Side Drawer ──────────────── */}
-      {showDrawer && (
-        <div className="drawer-overlay" onClick={() => setShowDrawer(false)}>
-          <div className="drawer-container" onClick={e => e.stopPropagation()}>
-            {/* Drawer Header */}
-            <div className="drawer-header">
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#2563eb', fontSize: 12, fontWeight: 700, marginBottom: 4 }}>
-                  <FileText style={{ width: 14, height: 14 }} /> 
-                  INVOICE MANAGEMENT
-                </div>
-                <h2 className="modal-title" style={{ fontSize: 24 }}>
-                  {selectedInvoice ? `Invoice: #${selectedInvoice.stockId}` : 'New Invoice Entry'}
-                </h2>
-                <p className="modal-subtitle">Follow the steps below to finalize the vehicle invoice.</p>
-              </div>
-              <button className="close-btn" onClick={() => setShowDrawer(false)}>
-                <X style={{ width: 24, height: 24 }} />
-              </button>
-            </div>
-
-            {/* Drawer Body */}
-            <div className="drawer-body">
-              {/* Steps Indicator */}
-              <div className="drawer-steps">
-                <StepItem num={1} label="Identity" active={activeStep === 1} done={activeStep > 1} />
-                <StepItem num={2} label="Financials" active={activeStep === 2} done={activeStep > 2} />
-                <StepItem num={3} label="Logistics" active={activeStep === 3} done={activeStep > 3} />
-                <StepItem num={4} label="Review" active={activeStep === 4} done={activeStep > 4} />
-              </div>
-
-              {activeStep === 1 && (
-                <div className="step-content">
-                  <div className="form-group-title"><User style={{ width: 14, height: 14 }} /> Customer & Vehicle Identity</div>
-                  <div className="grid-2" style={{ marginBottom: 24 }}>
-                    <div className="field">
-                      <label className="field-label">Stock ID</label>
-                      <input className="field-input" defaultValue={selectedInvoice?.stockId || '32773'} />
-                    </div>
-                    <div className="field">
-                      <label className="field-label">Chassis Number</label>
-                      <input className="field-input" defaultValue={selectedInvoice?.chassisNo || 'JZX100-0123456'} />
-                    </div>
-                  </div>
-                  <div className="field">
-                    <label className="field-label">Customer / Client</label>
-                    <div className="customer-box" style={{ background: '#f4f5f7', padding: 20 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                        <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyCenter: 'center', border: '1px solid #e2e8f0' }}>
-                          <User style={{ width: 20, height: 20, color: '#64748b' }} />
-                        </div>
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: 16 }}>{selectedInvoice?.client || 'Select Client'}</div>
-                          <div style={{ fontSize: 12, color: '#94a3b8' }}>ID: {selectedInvoice?.id || 'NEW'}</div>
-                        </div>
-                      </div>
-                      <textarea className="field-input" placeholder="Notify Party / Address Details..." defaultValue={selectedInvoice?.customerName}></textarea>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeStep === 2 && (
-                <div className="step-content">
-                  <div className="form-group-title"><Landmark style={{ width: 14, height: 14 }} /> Pricing & Payment Terms</div>
-                  <div className="pricing-grid" style={{ gap: 12 }}>
-                    <PricingRow label="Vehicle Cost (FOB)" value={selectedInvoice?.amount || 2660000} currency="JPY" />
-                    <PricingRow label="Ocean Freight" value={0} currency="JPY" />
-                    <PricingRow label="Insurance Premium" value={0} currency="JPY" />
-                    <div style={{ height: 1, background: '#f1f5f9', margin: '8px 0' }} />
-                    <PricingRow label="TOTAL CIF VALUE" value={selectedInvoice?.amount || 2660000} currency="JPY" bold />
-                  </div>
-                  <div className="field" style={{ marginTop: 24 }}>
-                    <label className="field-label">Payment Terms</label>
-                    <select className="field-input">
-                      <option>LC AT SIGHT</option>
-                      <option>TT PAYMENT</option>
-                      <option>CASH ON DELIVERY</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-
-              {activeStep === 3 && (
-                <div className="step-content">
-                  <div className="form-group-title"><Truck style={{ width: 14, height: 14 }} /> Logistics & Auction Charges</div>
-                  <div className="charges-list" style={{ gap: 10 }}>
-                    <ChargeRow label="Auction Fee" value="12,000" />
-                    <ChargeRow label="Forwarding Charge" value="15,000" />
-                    <ChargeRow label="Internal Transport" value="8,500" />
-                    <ChargeRow label="Inspection Fee" value="0" />
-                    <ChargeRow label="Radiation Check" value="0" />
-                  </div>
-                </div>
-              )}
-
-              {activeStep === 4 && (
-                <div className="step-content">
-                   <div className="form-group-title"><CheckCircle2 style={{ width: 14, height: 14 }} /> Review & Finalize</div>
-                   <div className="audit-card" style={{ background: '#f0fdf4', borderColor: '#bbf7d0', padding: 20, marginBottom: 24 }}>
-                      <div style={{ display: 'flex', gap: 12 }}>
-                        <div style={{ color: '#16a34a' }}><CheckCircle2 style={{ width: 24, height: 24 }} /></div>
-                        <div>
-                          <div style={{ fontWeight: 700, color: '#166534' }}>Ready for Finalization</div>
-                          <div style={{ fontSize: 13, color: '#15803d' }}>All required fields are validated. This will generate a formal invoice.</div>
-                        </div>
-                      </div>
-                   </div>
-                   <div className="summary-mini-card">
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                        <span style={{ color: '#64748b' }}>Total Invoice Amount</span>
-                        <span style={{ fontWeight: 800, fontSize: 20 }}>{selectedInvoice?.currency || 'JPY'} {selectedInvoice?.amount.toLocaleString() || '2,660,000'}</span>
-                      </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-                        <span style={{ color: '#64748b' }}>Projected Profit</span>
-                        <span style={{ fontWeight: 600, color: '#16a34a' }}>+¥145,000</span>
-                      </div>
-                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* Drawer Footer */}
-            <div className="drawer-footer">
-              <button 
-                className="btn btn-outline" 
-                onClick={() => activeStep > 1 ? setActiveStep(activeStep - 1) : setShowDrawer(false)}
-              >
-                {activeStep === 1 ? 'Cancel' : 'Previous Step'}
-              </button>
-              
-              <button 
-                className="btn btn-primary"
-                onClick={() => activeStep < 4 ? setActiveStep(activeStep + 1) : setShowDrawer(false)}
-              >
-                {activeStep === 4 ? 'Save & Finalize' : 'Next Step'} <ArrowRight style={{ width: 14, height: 14, marginLeft: 8 }} />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function StepItem({ num, label, active, done }: { num: number; label: string; active: boolean; done: boolean }) {
-  return (
-    <div className={`step-item ${active ? 'active' : ''}`}>
-      <div className="step-num">{done ? <Check style={{ width: 12, height: 12 }} /> : num}</div>
-      {label}
-    </div>
-  );
-}
-
-function PricingRow({ label, value, currency, bold }: { label: string; value: any; currency: string; bold?: boolean }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: bold ? 16 : 14 }}>
-      <span style={{ color: bold ? '#0f172a' : '#64748b', fontWeight: bold ? 700 : 400 }}>{label}</span>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: '#94a3b8' }}>{currency}</span>
-        <input className="pricing-input" style={{ width: 140, fontWeight: bold ? 800 : 600 }} defaultValue={value.toLocaleString()} />
-      </div>
-    </div>
-  );
-}
-
-function ChargeRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="charge-row" style={{ padding: '8px 0', borderBottom: '1px solid #f8fafc' }}>
-      <span className="charge-label" style={{ fontSize: 13 }}>{label}</span>
-      <input className="charge-input" style={{ width: 120, height: 32 }} defaultValue={value} />
+      <InvoiceFormModal
+        open={showForm}
+        invoice={selectedInvoice}
+        onClose={() => setShowForm(false)}
+      />
     </div>
   );
 }
