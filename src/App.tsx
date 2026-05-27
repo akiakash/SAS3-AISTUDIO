@@ -3,13 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, ReactNode } from 'react';
+import React, { useState, useEffect, ReactNode } from 'react';
+import { Routes, Route, Navigate, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   Search, Bell, History, HelpCircle, User,
   LayoutDashboard, Car, TrendingUp, DraftingCompass,
-  Settings2, Cloud, ChevronRight, Save, Gavel,
-  ClipboardList, ListChecks, Image as ImageIcon,
-  Zap, Shield, Plus, Eye, Pencil, Trash2, Filter,
+  Settings2, Cloud, ChevronRight, ClipboardList,
+  Plus, Eye, Pencil, Trash2, Filter,
   Download, ArrowUpDown, CheckCircle2, Clock, XCircle,
   Truck, ChevronDown, ChevronUp, MapPin, DollarSign, CalendarDays, PackageCheck,
   Layers,
@@ -17,6 +17,7 @@ import {
 import ManagePage from './ManagePage';
 import InvoicesPage from './InvoicesPage';
 import UsedVehiclesPage from './UsedVehiclesPage';
+import InventoryNewPage from './InventoryNewPage';
 import Sas3Logo from './Sas3Logo';
 
 /* ── Dummy Data ─────────────────────────────────────── */
@@ -81,11 +82,19 @@ const TRANSPORTS: Record<number, { id: number; transporter: string; deliveryYard
 };
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('inventory');
-  const [view, setView] = useState<'list' | 'form'>('list');
+  const location = useLocation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [expandedNav, setExpandedNav] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/vehicles')) {
+      setExpandedNav('vehicles');
+    } else if (location.pathname.startsWith('/orders')) {
+      setExpandedNav('orders');
+    }
+  }, [location.pathname]);
 
   const filtered = VEHICLES.filter(v =>
     `${v.make} ${v.model} ${v.chassis} ${v.stock}`.toLowerCase().includes(search.toLowerCase())
@@ -106,11 +115,10 @@ export default function App() {
 
         <div className="sidebar-section-label">Main Menu</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <NavLink
+          <SidebarNavLink
             icon={<LayoutDashboard />}
             label="Dashboard"
-            active={activeTab === 'dashboard'}
-            onClick={() => setActiveTab('dashboard')}
+            to="/dashboard"
           />
 
         </div>
@@ -123,10 +131,9 @@ export default function App() {
             expanded={expandedNav === 'vehicles'}
             onToggle={() => setExpandedNav(expandedNav === 'vehicles' ? null : 'vehicles')}
           >
-            <SubNavLink
+            <SidebarSubNavLink
               label="Manage"
-              active={activeTab === 'manage'}
-              onClick={() => setActiveTab('manage')}
+              to="/vehicles/manage"
             />
           </NavGroup>
         </div>
@@ -139,20 +146,17 @@ export default function App() {
             expanded={expandedNav === 'orders'}
             onToggle={() => setExpandedNav(expandedNav === 'orders' ? null : 'orders')}
           >
-            <SubNavLink
+            <SidebarSubNavLink
               label="Inventory"
-              active={activeTab === 'inventory'}
-              onClick={() => setActiveTab('inventory')}
+              to="/orders/inventory"
             />
-            <SubNavLink
+            <SidebarSubNavLink
               label="Invoice"
-              active={activeTab === 'invoice'}
-              onClick={() => setActiveTab('invoice')}
+              to="/orders/invoice"
             />
-            <SubNavLink
+            <SidebarSubNavLink
               label="Used Vehicles"
-              active={activeTab === 'used_vehicles'}
-              onClick={() => setActiveTab('used_vehicles')}
+              to="/orders/used-vehicles"
             />
           </NavGroup>
         </div>
@@ -172,13 +176,15 @@ export default function App() {
 
       <main className="main-content">
 
-        {activeTab === 'manage' ? (
-          <ManagePage />
-        ) : activeTab === 'invoice' ? (
-          <InvoicesPage />
-        ) : activeTab === 'used_vehicles' ? (
-          <UsedVehiclesPage />
-        ) : view === 'list' ? (
+        <Routes>
+          <Route path="/" element={<Navigate to="/orders/inventory" replace />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/vehicles/manage" element={<ManagePage />} />
+          <Route path="/orders/invoice" element={<InvoicesPage />} />
+          <Route path="/orders/used-vehicles" element={<UsedVehiclesPage />} />
+          <Route
+            path="/orders/inventory"
+            element={
           /* ════ INVENTORY LIST VIEW ════ */
           <>
             {/* Page Header */}
@@ -192,7 +198,7 @@ export default function App() {
                 <button className="btn btn-ghost" style={{ color: '#475569', borderColor: '#e2e8f0' }}>
                   <Download style={{ width: 14, height: 14 }} /> Export
                 </button>
-                <button className="btn btn-primary" onClick={() => setView('form')}>
+                <button className="btn btn-primary" onClick={() => navigate('/orders/inventory/new')}>
                   <Plus style={{ width: 14, height: 14 }} /> New Entry
                 </button>
               </div>
@@ -315,7 +321,7 @@ export default function App() {
                                 <button className="action-btn action-btn-view" title="View">
                                   <Eye style={{ width: 14, height: 14 }} />
                                 </button>
-                                <button className="action-btn action-btn-edit" title="Edit" onClick={() => setView('form')}>
+                                <button className="action-btn action-btn-edit" title="Edit" onClick={() => navigate('/orders/inventory/new')}>
                                   <Pencil style={{ width: 14, height: 14 }} />
                                 </button>
                                 <button className="action-btn action-btn-delete" title="Delete">
@@ -446,353 +452,10 @@ export default function App() {
               </div>
             </div>
           </>
-        ) : (
-          /* ════ NEW ENTRY FORM VIEW ════ */
-          <>
-            {/* Page Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
-              <div>
-                <div className="page-eyebrow">
-                  <button onClick={() => setView('list')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#2563eb', fontWeight: 600, fontSize: 12, padding: 0, fontFamily: 'inherit' }}>Inventory</button>
-                  <ChevronRight style={{ width: 12, height: 12 }} />
-                  <span>New Entry</span>
-                </div>
-                <h1 className="page-title">Auction → Order → Vehicle</h1>
-                <p className="page-subtitle">Form layout mirrors the database: auctions, orders, vehicles, and vehicle_details.</p>
-              </div>
-              <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
-                <button className="btn btn-ghost" onClick={() => setView('list')}>Cancel</button>
-                <button className="btn btn-primary"><Save style={{ width: 14, height: 14 }} />Save Entry</button>
-              </div>
-            </div>
-
-        {/* ── Auctions + Orders (side-by-side) ─────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-
-          {/* Auctions Card */}
-          <div className="form-card">
-            <div className="form-section">
-              <div className="form-section-header">
-                <div className="form-section-icon">
-                  <Gavel style={{ width: 14, height: 14, color: '#2563eb' }} />
-                </div>
-                <span className="form-section-title">Auctions</span>
-                <span className="form-section-tag">auctions</span>
-              </div>
-
-              <div className="section-grid section-grid-2">
-                <div className="col-span-2">
-                  <label className="field-label">Auction ID</label>
-                  <input className="field-input" type="text" placeholder="External auction reference" />
-                </div>
-                <div className="col-span-2">
-                  <label className="field-label">Auction Name</label>
-                  <input className="field-input" type="text" />
-                </div>
-                <div>
-                  <label className="field-label">Auction Company</label>
-                  <input className="field-input" type="text" />
-                </div>
-                <div>
-                  <label className="field-label">Auction Date</label>
-                  <input className="field-input" type="datetime-local" />
-                </div>
-                <div className="col-span-2">
-                  <label className="field-label">Port Letter</label>
-                  <input className="field-input" type="text" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Orders Card */}
-          <div className="form-card">
-            <div className="form-section">
-              <div className="form-section-header">
-                <div className="form-section-icon">
-                  <ClipboardList style={{ width: 14, height: 14, color: '#2563eb' }} />
-                </div>
-                <span className="form-section-title">Orders</span>
-                <span className="form-section-tag">orders</span>
-              </div>
-
-              <div className="section-grid section-grid-2">
-                <div>
-                  <label className="field-label">Order ID</label>
-                  <input className="field-input" type="text" />
-                </div>
-                <div>
-                  <label className="field-label">Sold Status</label>
-                  <select className="field-input">
-                    <option value="">Select…</option>
-                    <option>Sold</option>
-                    <option>Unsold</option>
-                    <option>Pending</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="field-label">Purchase Manager</label>
-                  <input className="field-input" type="text" />
-                </div>
-                <div>
-                  <label className="field-label">Auction ID (FK)</label>
-                  <input className="field-input" type="number" placeholder="Linked auction id" />
-                </div>
-                <div>
-                  <label className="field-label">POS Number</label>
-                  <input className="field-input" type="text" />
-                </div>
-                <div>
-                  <label className="field-label">Giri Giri</label>
-                  <input className="field-input" type="text" />
-                </div>
-                <div className="col-span-2">
-                  <label className="field-label">Created At</label>
-                  <input className="field-input" type="datetime-local" readOnly />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Vehicles Card ─────────────────────────────── */}
-        <div className="form-card" style={{ marginBottom: 16 }}>
-          <div className="form-section">
-            <div className="form-section-header">
-              <div className="form-section-icon">
-                <Car style={{ width: 14, height: 14, color: '#2563eb' }} />
-              </div>
-              <span className="form-section-title">Vehicles</span>
-              <span className="form-section-tag">vehicles</span>
-            </div>
-
-            <div style={{ marginBottom: 18 }}>
-              <label className="field-label">Order ID (FK)</label>
-              <input className="field-input" type="number" placeholder="Parent order id" style={{ maxWidth: 220 }} />
-            </div>
-
-            <div className="section-grid section-grid-4">
-              {[
-                { label: 'Make', type: 'text' },
-                { label: 'Brand', type: 'text' },
-                { label: 'Model', type: 'text' },
-                { label: 'Model Name', type: 'text' },
-                { label: 'Model Number', type: 'text' },
-                { label: 'Type', type: 'text' },
-                { label: 'Chassis Number', type: 'text' },
-                { label: 'Chassis Tick', type: 'text' },
-                { label: 'Engine Number', type: 'text' },
-                { label: 'Manufacture Year', type: 'text' },
-                { label: 'Manufacture Month', type: 'text' },
-                { label: 'Register Year', type: 'text' },
-                { label: 'Register Month', type: 'text' },
-                { label: 'Gear Type', type: 'text' },
-                { label: 'Doors', type: 'number' },
-                { label: 'Seats', type: 'number' },
-                { label: 'Fuel', type: 'text' },
-                { label: 'KM Mileage', type: 'number' },
-              ].map(({ label, type }) => (
-                <div key={label}>
-                  <label className="field-label">{label}</label>
-                  <input className="field-input" type={type} min={type === 'number' ? 0 : undefined} />
-                </div>
-              ))}
-              <div>
-                <label className="field-label">Created At</label>
-                <input className="field-input" type="datetime-local" readOnly />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Vehicle Details Card ──────────────────────── */}
-        <div className="form-card" style={{ marginBottom: 24 }}>
-          <div className="form-section">
-            <div className="form-section-header">
-              <div className="form-section-icon">
-                <ListChecks style={{ width: 14, height: 14, color: '#2563eb' }} />
-              </div>
-              <span className="form-section-title">Vehicle Details</span>
-              <span className="form-section-tag">vehicle_details</span>
-            </div>
-
-            <div style={{ marginBottom: 20 }}>
-              <label className="field-label">Vehicle ID (FK)</label>
-              <input className="field-input" type="number" placeholder="Parent vehicle id" style={{ maxWidth: 220 }} />
-            </div>
-
-            {/* Equipment flags */}
-            <div style={{ marginBottom: 24 }}>
-              <div className="flags-heading">
-                <Zap style={{ width: 12, height: 12 }} />
-                Equipment Flags
-              </div>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
-                gap: 8,
-              }}>
-                {['Airbag', 'ABS', 'Air Condition', 'Power Mirror', 'Power Steering', 'Power Window', 'Rear Wiper', 'Sun Roof', 'Stereo'].map(flag => (
-                  <label key={flag} className="check-pill">
-                    <input type="checkbox" />
-                    {flag}
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Horizontal rule */}
-            <div style={{ height: 1, background: '#f1f5f9', margin: '0 -28px 24px' }} />
-
-            {/* Detail fields */}
-            <div className="section-grid section-grid-4" style={{ marginBottom: 16 }}>
-              <div>
-                <label className="field-label">Color</label>
-                <input className="field-input" type="text" />
-              </div>
-              <div>
-                <label className="field-label">Country</label>
-                <input className="field-input" type="text" />
-              </div>
-              <div>
-                <label className="field-label">Price (Yen)</label>
-                <input className="field-input" type="number" min={0} />
-              </div>
-              <div>
-                <label className="field-label">Transmission Type</label>
-                <input className="field-input" type="text" />
-              </div>
-              <div>
-                <label className="field-label">Auction Grade</label>
-                <input className="field-input" type="text" />
-              </div>
-              <div>
-                <label className="field-label">Stock ID</label>
-                <input className="field-input" type="text" />
-              </div>
-              <div>
-                <label className="field-label">Mileage Unit</label>
-                <select className="field-input">
-                  <option value="">Select…</option>
-                  <option>km</option>
-                  <option>miles</option>
-                </select>
-              </div>
-              <div>
-                <label className="field-label">Availability Status</label>
-                <select className="field-input">
-                  <option value="">Select…</option>
-                  <option>Available</option>
-                  <option>Reserved</option>
-                  <option>Sold</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Image fields */}
-            <div className="section-grid section-grid-2" style={{ marginBottom: 16 }}>
-              <div>
-                <label className="field-label" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <ImageIcon style={{ width: 11, height: 11 }} />
-                  Main Image URL
-                </label>
-                <input className="field-input" type="url" placeholder="https://…" />
-              </div>
-              <div>
-                <label className="field-label">Additional Images</label>
-                <textarea
-                  className="field-input"
-                  style={{ minHeight: 68 }}
-                  placeholder="JSON or newline-separated URLs"
-                />
-              </div>
-            </div>
-
-            <div style={{ marginBottom: 14 }}>
-              <label className="field-label">Description</label>
-              <textarea className="field-input" style={{ minHeight: 80 }} />
-            </div>
-
-            <div>
-              <label className="field-label">Extra Details</label>
-              <textarea className="field-input" style={{ minHeight: 64 }} />
-            </div>
-          </div>
-        </div>
-
-        {/* ── Transport Records ──────────────────────────── */}
-        <div className="form-card" style={{ marginBottom: 16 }}>
-          <div className="form-section">
-            <div className="form-section-header">
-              <div className="form-section-icon" style={{ background: '#ede9fe', border: '1px solid #ddd6fe' }}>
-                <Truck style={{ width: 14, height: 14, color: '#7c3aed' }} />
-              </div>
-              <span className="form-section-title">Transport Records</span>
-              <span className="form-section-tag" style={{ color: '#7c3aed', background: '#ede9fe', borderColor: '#ddd6fe' }}>transports</span>
-              <span style={{ fontSize: 10, color: '#94a3b8', marginLeft: 8 }}>One order can have multiple transport legs</span>
-            </div>
-
-            {/* Column headers */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr 140px 120px 1fr 36px', gap: 10, marginBottom: 8, padding: '0 4px' }}>
-              {['Transporter', 'Delivery Yard', 'Yard In Date', 'Cost (¥)', 'Status', ''].map(h => (
-                <div key={h} style={{ fontSize: 10, fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{h}</div>
-              ))}
-            </div>
-
-            {/* Default 2 transport rows */}
-            {[1, 2].map(n => (
-              <div key={n} style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr 140px 120px 1fr 36px', gap: 10, marginBottom: 10, alignItems: 'center' }}>
-                <input className="field-input" type="text" placeholder={n === 1 ? 'e.g. Nippon Express' : 'e.g. Gulf Freight'} />
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <MapPin style={{ width: 12, height: 12, color: '#94a3b8', flexShrink: 0 }} />
-                  <input className="field-input" type="text" placeholder="Yard / port name" style={{ flex: 1 }} />
-                </div>
-                <input className="field-input" type="date" />
-                <input className="field-input" type="number" placeholder="0" min={0} />
-                <select className="field-input">
-                  <option value="">Status…</option>
-                  <option>Pending</option>
-                  <option>In Transit</option>
-                  <option>Delivered</option>
-                  <option>Awaiting</option>
-                </select>
-                <button style={{ width: 32, height: 32, flexShrink: 0, border: '1px solid #fee2e2', borderRadius: 7, background: '#fef2f2', color: '#dc2626', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Trash2 style={{ width: 13, height: 13 }} />
-                </button>
-              </div>
-            ))}
-
-            {/* Add row button */}
-            <button style={{ display: 'flex', alignItems: 'center', gap: 6, height: 34, padding: '0 14px', border: '1.5px dashed #c7d2fe', borderRadius: 8, background: 'transparent', color: '#6366f1', fontSize: 12.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit', marginTop: 4, transition: 'all 0.15s' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = '#eef2ff'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
-            >
-              <Plus style={{ width: 13, height: 13 }} /> Add Another Transport Leg
-            </button>
-          </div>
-        </div>
-
-        {/* ── Audit Trail ───────────────────────────────── */}
-        <div className="audit-card">
-          <div className="audit-card-header">
-            <Shield style={{ width: 13, height: 13, color: '#64748b' }} />
-            Audit Trail
-          </div>
-          <AuditRow
-            label="System initialized ledger record"
-            time="2023-11-24 09:12:44"
-            dotColor="#94a3b8"
+            }
           />
-          <AuditRow
-            label={<span>Chassis validation: <span style={{ color: '#16a34a', fontWeight: 700 }}>SUCCESS</span></span>}
-            time="2023-11-24 09:12:45"
-            dotColor="#1d4ed8"
-            highlight
-          />
-        </div>
-
-        </> /* end form view */
-        )} {/* end ternary */}
+          <Route path="/orders/inventory/new/*" element={<InventoryNewPage />} />
+        </Routes>
 
       </main>
     </div>
@@ -801,16 +464,29 @@ export default function App() {
 
 /* ── Sub-components ────────────────────────────────────── */
 
-function NavLink({ icon, label, active, onClick }: {
-  icon: ReactNode; label: string; active?: boolean; onClick: () => void;
+function DashboardPage() {
+  return (
+    <>
+      <div className="page-eyebrow"><span>Main Menu</span></div>
+      <h1 className="page-title">Dashboard</h1>
+      <p className="page-subtitle">Overview and quick actions for your inventory suite.</p>
+    </>
+  );
+}
+
+function SidebarNavLink({ icon, label, to }: {
+  icon: ReactNode; label: string; to: string;
 }) {
   return (
-    <button onClick={onClick} className={`nav-link${active ? ' active' : ''}`}>
+    <NavLink
+      to={to}
+      className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+    >
       <span className="nav-icon" style={{ display: 'flex', alignItems: 'center' }}>
         {icon}
       </span>
       {label}
-    </button>
+    </NavLink>
   );
 }
 
@@ -844,47 +520,17 @@ function NavGroup({ icon, label, expanded, onToggle, children }: {
   );
 }
 
-function SubNavLink({ label, active, onClick }: {
-  label: string; active?: boolean; onClick: () => void;
+function SidebarSubNavLink({ label, to }: {
+  label: string; to: string;
 }) {
   return (
-    <button onClick={onClick} className={`nav-sublink${active ? ' active' : ''}`}>
+    <NavLink
+      to={to}
+      end={to === '/orders/inventory'}
+      className={({ isActive }) => `nav-sublink${isActive ? ' active' : ''}`}
+    >
       <span className="nav-sublink-dot" />
       {label}
-    </button>
-  );
-}
-
-function FlagCheckbox({ label }: { label: string }) {
-  return (
-    <label className="check-pill">
-      <input type="checkbox" />
-      {label}
-    </label>
-  );
-}
-
-function AuditRow({
-  label, time, dotColor, highlight,
-}: {
-  label: ReactNode;
-  time: string;
-  dotColor?: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div className="audit-row" style={{ background: highlight ? '#fafcff' : undefined }}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div
-          className="audit-dot"
-          style={{
-            background: dotColor ?? '#cbd5e1',
-            boxShadow: highlight ? `0 0 0 3px ${dotColor}20` : undefined,
-          }}
-        />
-        <span className="audit-label">{label}</span>
-      </div>
-      <span className="audit-time">{time}</span>
-    </div>
+    </NavLink>
   );
 }
