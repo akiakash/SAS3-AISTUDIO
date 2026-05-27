@@ -72,7 +72,6 @@ export default function VehicleDetailPanel({
       </div>
 
       <VehicleAttachments
-        vehicleId={vehicle.id}
         stockLabel={vehicle.stock}
         attachments={attachments}
         onAddImages={onAddImages}

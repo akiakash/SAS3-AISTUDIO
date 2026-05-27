@@ -8,8 +8,12 @@ import { Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import {
   Save, Gavel, ClipboardList, ListChecks,
   Image as ImageIcon, Zap, Shield, Plus, Trash2, Car, Truck, MapPin,
-  Table2, FileEdit,
+  Table2, FileEdit, Paperclip, ChevronDown, ChevronUp,
 } from 'lucide-react';
+import VehicleAttachments from './VehicleAttachments';
+import { useAttachmentsMap } from './useAttachmentsMap';
+
+const FORM_ATTACHMENTS_KEY = 'new-entry-form';
 
 import { VEHICLES } from '../../../data/inventory/vehicleData';
 import {
@@ -62,6 +66,8 @@ function NewEntryViewBar() {
 
 function InventorySheetEntry() {
   const [entryRows, setEntryRows] = useState<SheetRow[]>(() => [createEmptySheetRow()]);
+  const [expandedAttachRow, setExpandedAttachRow] = useState<string | null>(null);
+  const { getAttachments, addImages, addDocuments, removeImage, removeDocument, clearAttachments } = useAttachmentsMap();
   const existingRows = VEHICLES.map(v => ({ id: `existing-${v.id}`, ...vehicleToSheetData(v) }));
 
   const updateCell = (rowId: string, key: keyof SheetData, value: string) => {
@@ -74,14 +80,18 @@ function InventorySheetEntry() {
 
   const removeEntryRow = (rowId: string) => {
     setEntryRows(prev => (prev.length <= 1 ? prev : prev.filter(r => r.id !== rowId)));
+    clearAttachments(rowId);
+    setExpandedAttachRow(prev => (prev === rowId ? null : prev));
   };
 
   const clearEntryRows = () => {
+    entryRows.forEach(r => clearAttachments(r.id));
     setEntryRows([createEmptySheetRow()]);
+    setExpandedAttachRow(null);
   };
 
   const filledCount = entryRows.filter(rowHasEntryData).length;
-  const totalColumns = SHEET_COLUMNS.length + 2;
+  const totalColumns = SHEET_COLUMNS.length + 3;
 
   const handlePaste = useCallback((e: React.ClipboardEvent<HTMLTableElement>) => {
     const text = e.clipboardData.getData('text/plain');
@@ -140,6 +150,7 @@ function InventorySheetEntry() {
             <thead>
               <tr>
                 <th className="inventory-sheet-row-num" rowSpan={2}>#</th>
+                <th className="inventory-sheet-attach-col" rowSpan={2} title="Images & documents">A</th>
                 {SHEET_COLUMN_GROUPS.map(group => (
                   <th key={group.label} colSpan={group.columns.length} className="inventory-sheet-group-th">
                     {group.label}
@@ -156,22 +167,26 @@ function InventorySheetEntry() {
             <tbody>
               <tr className="inventory-sheet-section-row">
                 <td colSpan={totalColumns}>
-                  New entry — fill row{entryRows.length > 1 ? 's' : ''} below
+                  New entry — fill rows below · column <strong>A</strong> for images & documents
                 </td>
               </tr>
               {entryRows.map((row, index) => (
-                <tr key={row.id} className="inventory-sheet-entry-row">
-                  <td className="inventory-sheet-row-num inventory-sheet-row-num-new">+{index + 1}</td>
-                  {SHEET_COLUMNS.map(col => (
-                    <td key={col.key}>
-                      <SheetCellInput
-                        col={col}
-                        value={row[col.key]}
-                        onChange={value => updateCell(row.id, col.key, value)}
-                      />
-                    </td>
-                  ))}
-                  <td className="inventory-sheet-actions-col">
+                <React.Fragment key={row.id}>
+                <SheetTableRowWithAttachments
+                  rowId={row.id}
+                  rowNum={`+${index + 1}`}
+                  rowNumClass="inventory-sheet-row-num-new"
+                  rowClassName="inventory-sheet-entry-row"
+                  totalColumns={totalColumns}
+                  stockLabel={row.stockId || row.chassisNumber || `Row +${index + 1}`}
+                  expandedAttachRow={expandedAttachRow}
+                  onToggleAttach={() => setExpandedAttachRow(expandedAttachRow === row.id ? null : row.id)}
+                  getAttachments={getAttachments}
+                  addImages={addImages}
+                  addDocuments={addDocuments}
+                  removeImage={removeImage}
+                  removeDocument={removeDocument}
+                  actions={(
                     <button
                       type="button"
                       className="action-btn action-btn-delete"
@@ -181,18 +196,42 @@ function InventorySheetEntry() {
                     >
                       <Trash2 style={{ width: 14, height: 14 }} />
                     </button>
-                  </td>
-                </tr>
+                  )}
+                >
+                  {SHEET_COLUMNS.map(col => (
+                    <td key={col.key}>
+                      <SheetCellInput
+                        col={col}
+                        value={row[col.key]}
+                        onChange={value => updateCell(row.id, col.key, value)}
+                      />
+                    </td>
+                  ))}
+                </SheetTableRowWithAttachments>
+                </React.Fragment>
               ))}
 
               <tr className="inventory-sheet-section-row inventory-sheet-section-existing">
                 <td colSpan={totalColumns}>
-                  Existing vehicles ({existingRows.length})
+                  Existing vehicles ({existingRows.length}) — expand <strong>A</strong> to add images & documents
                 </td>
               </tr>
               {existingRows.map((row, index) => (
-                <tr key={row.id} className="inventory-sheet-existing-row">
-                  <td className="inventory-sheet-row-num">{index + 1}</td>
+                <React.Fragment key={row.id}>
+                <SheetTableRowWithAttachments
+                  rowId={row.id}
+                  rowNum={String(index + 1)}
+                  rowClassName="inventory-sheet-existing-row"
+                  totalColumns={totalColumns}
+                  stockLabel={row.stockId || row.chassisNumber || `Vehicle ${index + 1}`}
+                  expandedAttachRow={expandedAttachRow}
+                  onToggleAttach={() => setExpandedAttachRow(expandedAttachRow === row.id ? null : row.id)}
+                  getAttachments={getAttachments}
+                  addImages={addImages}
+                  addDocuments={addDocuments}
+                  removeImage={removeImage}
+                  removeDocument={removeDocument}
+                >
                   {SHEET_COLUMNS.map(col => (
                     <td key={col.key}>
                       <span className="inventory-sheet-readonly" title={row[col.key]}>
@@ -200,8 +239,8 @@ function InventorySheetEntry() {
                       </span>
                     </td>
                   ))}
-                  <td className="inventory-sheet-actions-col" />
-                </tr>
+                </SheetTableRowWithAttachments>
+                </React.Fragment>
               ))}
             </tbody>
           </table>
@@ -213,6 +252,87 @@ function InventorySheetEntry() {
         </div>
       </div>
     </div>
+  );
+}
+
+type SheetAttachHandlers = {
+  getAttachments: (key: string) => import('./VehicleAttachments').VehicleAttachmentState;
+  addImages: (key: string, files: FileList) => void;
+  addDocuments: (key: string, files: FileList) => void;
+  removeImage: (key: string, id: string) => void;
+  removeDocument: (key: string, id: string) => void;
+};
+
+function SheetTableRowWithAttachments({
+  rowId,
+  rowNum,
+  rowNumClass,
+  rowClassName,
+  totalColumns,
+  stockLabel,
+  expandedAttachRow,
+  onToggleAttach,
+  children,
+  actions,
+  getAttachments,
+  addImages,
+  addDocuments,
+  removeImage,
+  removeDocument,
+}: {
+  rowId: string;
+  rowNum: string;
+  rowNumClass?: string;
+  rowClassName: string;
+  totalColumns: number;
+  stockLabel: string;
+  expandedAttachRow: string | null;
+  onToggleAttach: () => void;
+  children: React.ReactNode;
+  actions?: React.ReactNode;
+} & SheetAttachHandlers) {
+  const attach = getAttachments(rowId);
+  const attachCount = attach.images.length + attach.documents.length;
+  const attachExpanded = expandedAttachRow === rowId;
+
+  return (
+    <>
+      <tr className={rowClassName}>
+        <td className={`inventory-sheet-row-num${rowNumClass ? ` ${rowNumClass}` : ''}`}>{rowNum}</td>
+        <td className="inventory-sheet-attach-col">
+          <button
+            type="button"
+            className={`inventory-expand-btn${attachExpanded ? ' active' : ''}`}
+            onClick={onToggleAttach}
+            title="Upload images & documents"
+          >
+            {attachExpanded ? <ChevronUp size={12} /> : <Paperclip size={12} />}
+            {!attachExpanded && attachCount > 0 && (
+              <span className="inventory-transport-badge">{attachCount}</span>
+            )}
+          </button>
+        </td>
+        {children}
+        <td className="inventory-sheet-actions-col">{actions}</td>
+      </tr>
+      {attachExpanded && (
+        <tr className="inventory-sheet-attach-expand-row">
+          <td colSpan={totalColumns} className="inventory-sheet-attach-expand-cell">
+            <div className="entry-sheet-attachments-wrap">
+              <VehicleAttachments
+                stockLabel={stockLabel}
+                attachments={attach}
+                onAddImages={files => addImages(rowId, files)}
+                onAddDocuments={files => addDocuments(rowId, files)}
+                onRemoveImage={id => removeImage(rowId, id)}
+                onRemoveDocument={id => removeDocument(rowId, id)}
+                compact
+              />
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
   );
 }
 
@@ -251,6 +371,9 @@ function SheetCellInput({
 }
 
 function InventoryFormEntry() {
+  const { getAttachments, addImages, addDocuments, removeImage, removeDocument } = useAttachmentsMap();
+  const formAttachments = getAttachments(FORM_ATTACHMENTS_KEY);
+
   return (
     <>
       <NewEntryViewBar />
@@ -463,18 +586,12 @@ function InventoryFormEntry() {
               </select>
             </div>
           </div>
-          <div className="section-grid section-grid-2" style={{ marginBottom: 16 }}>
-            <div>
-              <label className="field-label" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                <ImageIcon style={{ width: 11, height: 11 }} />
-                Main Image URL
-              </label>
-              <input className="field-input" type="url" placeholder="https://…" />
-            </div>
-            <div>
-              <label className="field-label">Additional Images</label>
-              <textarea className="field-input" style={{ minHeight: 68 }} placeholder="JSON or newline-separated URLs" />
-            </div>
+          <div style={{ marginBottom: 16 }}>
+            <label className="field-label" style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <ImageIcon style={{ width: 11, height: 11 }} />
+              Main Image URL
+            </label>
+            <input className="field-input" type="url" placeholder="https://… (optional if uploading below)" />
           </div>
           <div style={{ marginBottom: 14 }}>
             <label className="field-label">Description</label>
@@ -484,6 +601,31 @@ function InventoryFormEntry() {
             <label className="field-label">Extra Details</label>
             <textarea className="field-input" style={{ minHeight: 64 }} />
           </div>
+        </div>
+      </div>
+
+      <div className="form-card" style={{ marginBottom: 16 }}>
+        <div className="form-section">
+          <div className="form-section-header">
+            <div className="form-section-icon" style={{ background: '#ecfdf5', border: '1px solid #bbf7d0' }}>
+              <Paperclip style={{ width: 14, height: 14, color: '#16a34a' }} />
+            </div>
+            <span className="form-section-title">Images & Documents</span>
+            <span className="form-section-tag" style={{ color: '#16a34a', background: '#ecfdf5', borderColor: '#bbf7d0' }}>
+              attachments
+            </span>
+          </div>
+          <p className="entry-form-attachments-hint">
+            Upload vehicle photos and related documents (PDF, Word, Excel). Files are stored for this entry until you save.
+          </p>
+          <VehicleAttachments
+            stockLabel="New entry"
+            attachments={formAttachments}
+            onAddImages={files => addImages(FORM_ATTACHMENTS_KEY, files)}
+            onAddDocuments={files => addDocuments(FORM_ATTACHMENTS_KEY, files)}
+            onRemoveImage={id => removeImage(FORM_ATTACHMENTS_KEY, id)}
+            onRemoveDocument={id => removeDocument(FORM_ATTACHMENTS_KEY, id)}
+          />
         </div>
       </div>
 

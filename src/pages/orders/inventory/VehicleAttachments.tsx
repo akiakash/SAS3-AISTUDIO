@@ -29,13 +29,14 @@ export function emptyVehicleAttachments(): VehicleAttachmentState {
 }
 
 type VehicleAttachmentsProps = {
-  vehicleId: number;
   stockLabel: string;
   attachments: VehicleAttachmentState;
   onAddImages: (files: FileList) => void;
   onAddDocuments: (files: FileList) => void;
   onRemoveImage: (id: string) => void;
   onRemoveDocument: (id: string) => void;
+  /** Compact layout for sheet row expand panels */
+  compact?: boolean;
 };
 
 export default function VehicleAttachments({
@@ -45,12 +46,13 @@ export default function VehicleAttachments({
   onAddDocuments,
   onRemoveImage,
   onRemoveDocument,
+  compact,
 }: VehicleAttachmentsProps) {
   const imageInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div className="inventory-attachments">
+    <div className={`inventory-attachments${compact ? ' inventory-attachments--compact' : ''}`}>
       <div className="inventory-attachments-head">
         <Paperclip style={{ width: 13, height: 13, color: '#2563eb' }} />
         <span>Attachments — {stockLabel}</span>
