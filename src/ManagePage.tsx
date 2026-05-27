@@ -320,20 +320,13 @@ export default function ManagePage() {
 
   return (
     <div className="manage-page">
-      {/* ── Page Header ──────────────────────────── */}
-      <div className="manage-header">
-        <div>
-          <div className="manage-eyebrow">Vehicles</div>
-          <h1 className="manage-title">Vehicles</h1>
-        </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <button className="manage-btn manage-btn-outline">
-            <Download style={{ width: 14, height: 14 }} /> Export
-          </button>
-          <button className="manage-btn manage-btn-primary">
-            <Plus style={{ width: 14, height: 14 }} /> Add Vehicle
-          </button>
-        </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 12 }}>
+        <button className="manage-btn manage-btn-outline">
+          <Download style={{ width: 14, height: 14 }} /> Export
+        </button>
+        <button className="manage-btn manage-btn-primary">
+          <Plus style={{ width: 14, height: 14 }} /> Add Vehicle
+        </button>
       </div>
 
       {/* ── Toolbar ───────────────────────────────── */}

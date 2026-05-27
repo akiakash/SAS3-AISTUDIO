@@ -3,12 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, ReactNode } from 'react';
-import { Routes, Route, Navigate, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState, ReactNode } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import {
-  Search, Bell, History, HelpCircle, User,
-  LayoutDashboard, Car, TrendingUp, DraftingCompass,
-  Settings2, Cloud, ChevronRight, ClipboardList,
+  Search,
   Plus, Eye, Pencil, Trash2, Filter,
   Download, ArrowUpDown, CheckCircle2, Clock, XCircle,
   Truck, ChevronDown, ChevronUp, MapPin, DollarSign, CalendarDays, PackageCheck,
@@ -18,7 +16,7 @@ import ManagePage from './ManagePage';
 import InvoicesPage from './InvoicesPage';
 import UsedVehiclesPage from './UsedVehiclesPage';
 import InventoryNewPage from './InventoryNewPage';
-import Sas3Logo from './Sas3Logo';
+import TopNavbar from './TopNavbar';
 import { VEHICLES } from './vehicleData';
 
 const STATUS_STYLE: Record<string, { bg: string; color: string; border: string; icon: ReactNode }> = {
@@ -71,19 +69,9 @@ const TRANSPORTS: Record<number, { id: number; transporter: string; deliveryYard
 };
 
 export default function App() {
-  const location = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
-  const [expandedNav, setExpandedNav] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (location.pathname.startsWith('/vehicles')) {
-      setExpandedNav('vehicles');
-    } else if (location.pathname.startsWith('/orders')) {
-      setExpandedNav('orders');
-    }
-  }, [location.pathname]);
 
   const filtered = VEHICLES.filter(v =>
     `${v.make} ${v.model} ${v.chassis} ${v.stock}`.toLowerCase().includes(search.toLowerCase())
@@ -92,76 +80,8 @@ export default function App() {
   const totalTransports = Object.values(TRANSPORTS).reduce((s, a) => s + a.length, 0);
 
   return (
-    <div style={{ minHeight: '100vh' }}>
-
-
-      {/* ── Sidebar ──────────────────────────────────────── */}
-      <nav className="sidebar">
-        <div className="sidebar-brand">
-          <Sas3Logo className="sidebar-logo-img" height={30} />
-          <p className="sidebar-brand-tag">Inventory Suite</p>
-        </div>
-
-        <div className="sidebar-section-label">Main Menu</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <SidebarNavLink
-            icon={<LayoutDashboard />}
-            label="Dashboard"
-            to="/dashboard"
-          />
-
-        </div>
-
-        <div className="sidebar-section-label" style={{ marginTop: 20 }}>Vehicles</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <NavGroup
-            icon={<Car />}
-            label="Vehicles"
-            expanded={expandedNav === 'vehicles'}
-            onToggle={() => setExpandedNav(expandedNav === 'vehicles' ? null : 'vehicles')}
-          >
-            <SidebarSubNavLink
-              label="Manage"
-              to="/vehicles/manage"
-            />
-          </NavGroup>
-        </div>
-
-        <div className="sidebar-section-label" style={{ marginTop: 20 }}>Orders</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <NavGroup
-            icon={<ClipboardList />}
-            label="Orders"
-            expanded={expandedNav === 'orders'}
-            onToggle={() => setExpandedNav(expandedNav === 'orders' ? null : 'orders')}
-          >
-            <SidebarSubNavLink
-              label="Inventory"
-              to="/orders/inventory"
-            />
-            <SidebarSubNavLink
-              label="Invoice"
-              to="/orders/invoice"
-            />
-            <SidebarSubNavLink
-              label="Used Vehicles"
-              to="/orders/used-vehicles"
-            />
-          </NavGroup>
-        </div>
-
-        <div className="sidebar-footer">
-          <div className="sidebar-footer-row">
-            <div className="sidebar-status-icon">
-              <Cloud style={{ width: 13, height: 13, color: '#16a34a' }} />
-            </div>
-            <div>
-              <div className="sidebar-footer-title">Systems OK</div>
-              <div className="sidebar-footer-sub">v2.0.48 · All services up</div>
-            </div>
-          </div>
-        </div>
-      </nav>
+    <div className="app-shell">
+      <TopNavbar />
 
       <main className="main-content">
 
@@ -176,21 +96,10 @@ export default function App() {
             element={
           /* ════ INVENTORY LIST VIEW ════ */
           <>
-            {/* Page Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
-              <div>
-                <div className="page-eyebrow"><span>Inventory</span></div>
-                <h1 className="page-title">Vehicle Inventory</h1>
-                <p className="page-subtitle">{counts.total} vehicles tracked across all auctions.</p>
-              </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button className="btn btn-ghost" style={{ color: '#475569', borderColor: '#e2e8f0' }}>
-                  <Download style={{ width: 14, height: 14 }} /> Export
-                </button>
-                <button className="btn btn-primary" onClick={() => navigate('/orders/inventory/new')}>
-                  <Plus style={{ width: 14, height: 14 }} /> New Entry
-                </button>
-              </div>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+              <button className="btn btn-ghost" style={{ color: '#475569', borderColor: '#e2e8f0' }}>
+                <Download style={{ width: 14, height: 14 }} /> Export
+              </button>
             </div>
 
             {/* Stats row */}
@@ -310,7 +219,7 @@ export default function App() {
                                 <button className="action-btn action-btn-view" title="View">
                                   <Eye style={{ width: 14, height: 14 }} />
                                 </button>
-                                <button className="action-btn action-btn-edit" title="Edit" onClick={() => navigate('/orders/inventory/new')}>
+                                <button className="action-btn action-btn-edit" title="Edit" onClick={() => navigate('/orders/inventory/new/form')}>
                                   <Pencil style={{ width: 14, height: 14 }} />
                                 </button>
                                 <button className="action-btn action-btn-delete" title="Delete">
@@ -455,71 +364,6 @@ export default function App() {
 
 function DashboardPage() {
   return (
-    <>
-      <div className="page-eyebrow"><span>Main Menu</span></div>
-      <h1 className="page-title">Dashboard</h1>
-      <p className="page-subtitle">Overview and quick actions for your inventory suite.</p>
-    </>
-  );
-}
-
-function SidebarNavLink({ icon, label, to }: {
-  icon: ReactNode; label: string; to: string;
-}) {
-  return (
-    <NavLink
-      to={to}
-      className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
-    >
-      <span className="nav-icon" style={{ display: 'flex', alignItems: 'center' }}>
-        {icon}
-      </span>
-      {label}
-    </NavLink>
-  );
-}
-
-function NavGroup({ icon, label, expanded, onToggle, children }: {
-  icon: ReactNode; label: string; expanded: boolean; onToggle: () => void; children: ReactNode;
-}) {
-  return (
-    <div className="nav-group">
-      <button onClick={onToggle} className={`nav-link nav-group-toggle${expanded ? ' expanded' : ''}`}>
-        <span className="nav-icon" style={{ display: 'flex', alignItems: 'center' }}>
-          {icon}
-        </span>
-        {label}
-        <ChevronRight
-          className="nav-group-chevron"
-          style={{
-            width: 13, height: 13,
-            marginLeft: 'auto',
-            transition: 'transform 0.2s ease',
-            transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
-            color: '#94a3b8',
-          }}
-        />
-      </button>
-      {expanded && (
-        <div className="nav-group-children">
-          {children}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function SidebarSubNavLink({ label, to }: {
-  label: string; to: string;
-}) {
-  return (
-    <NavLink
-      to={to}
-      end={to === '/orders/inventory'}
-      className={({ isActive }) => `nav-sublink${isActive ? ' active' : ''}`}
-    >
-      <span className="nav-sublink-dot" />
-      {label}
-    </NavLink>
+    <p className="page-subtitle">Overview and quick actions for your inventory suite.</p>
   );
 }

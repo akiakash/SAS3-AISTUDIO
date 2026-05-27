@@ -36,12 +36,7 @@ export default function InvoicesPage() {
 
   return (
     <div className="invoices-page">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
-        <div>
-          <div className="page-eyebrow">Orders</div>
-          <h1 className="page-title">Invoices</h1>
-          <p className="page-subtitle">Manage billing, LC payments, and shipping documentation.</p>
-        </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
         <div style={{ display: 'flex', gap: 10 }}>
           <button type="button" className="btn btn-outline">
             <Download style={{ width: 14, height: 14 }} /> Export Excel

@@ -4,11 +4,11 @@
  */
 
 import React, { useState, useCallback, ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, NavLink } from 'react-router-dom';
 import {
-  ChevronRight, Save, Gavel, ClipboardList, ListChecks,
+  Save, Gavel, ClipboardList, ListChecks,
   Image as ImageIcon, Zap, Shield, Plus, Trash2, Car, Truck, MapPin,
-  FileEdit, Table2,
+  Table2, FileEdit,
 } from 'lucide-react';
 
 import { VEHICLES } from './vehicleData';
@@ -23,59 +23,40 @@ import {
   type SheetColumnDef,
 } from './inventorySheetColumns';
 
-type EntryMode = 'form' | 'sheet';
-
 export default function InventoryNewPage() {
-  const navigate = useNavigate();
-  const [entryMode, setEntryMode] = useState<EntryMode>('sheet');
-
   return (
-    <>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, flexWrap: 'wrap', gap: 16 }}>
-        <div>
-          <div className="page-eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <Link to="/orders/inventory" style={{ color: '#2563eb', fontWeight: 600, fontSize: 12, textDecoration: 'none' }}>Inventory</Link>
-            <ChevronRight style={{ width: 12, height: 12 }} />
-            <span>New Entry</span>
-          </div>
-          <h1 className="page-title">Add Inventory Entry</h1>
-          <p className="page-subtitle">
-            {entryMode === 'sheet'
-              ? 'Fill the empty row at the top, then review existing vehicles below. Tab between cells or paste from Excel.'
-              : 'Full detailed form: auction, order, vehicle, and vehicle_details.'}
-          </p>
-        </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-          <div className="manage-view-toggle">
-            <button
-              type="button"
-              className={`manage-view-btn${entryMode === 'sheet' ? ' active' : ''}`}
-              onClick={() => setEntryMode('sheet')}
-              title="Sheet entry (Excel-style)"
-              style={{ width: 'auto', padding: '0 12px', gap: 6, fontSize: 12, fontWeight: 600 }}
-            >
-              <Table2 style={{ width: 14, height: 14 }} />
-              Sheet
-            </button>
-            <button
-              type="button"
-              className={`manage-view-btn${entryMode === 'form' ? ' active' : ''}`}
-              onClick={() => setEntryMode('form')}
-              title="Detailed form entry"
-              style={{ width: 'auto', padding: '0 12px', gap: 6, fontSize: 12, fontWeight: 600 }}
-            >
-              <FileEdit style={{ width: 14, height: 14 }} />
-              Form
-            </button>
-          </div>
-          <button type="button" className="btn btn-ghost" onClick={() => navigate('/orders/inventory')}>
-            Back to Inventory
-          </button>
-        </div>
-      </div>
+    <Routes>
+      <Route index element={<InventorySheetEntry />} />
+      <Route path="form" element={<InventoryFormEntry />} />
+      <Route path="*" element={<Navigate to="/orders/inventory/new" replace />} />
+    </Routes>
+  );
+}
 
-      {entryMode === 'sheet' ? <InventorySheetEntry /> : <InventoryFormEntry />}
-    </>
+function NewEntryViewBar() {
+  return (
+    <div className="new-entry-view-bar">
+      <span className="new-entry-view-label">Entry mode</span>
+      <div className="manage-view-toggle">
+        <NavLink
+          to="/orders/inventory/new"
+          end
+          className={({ isActive }) => `manage-view-btn${isActive ? ' active' : ''}`}
+          style={{ width: 'auto', padding: '0 14px', gap: 6, fontSize: 12, fontWeight: 600, textDecoration: 'none' }}
+        >
+          <Table2 style={{ width: 14, height: 14 }} />
+          Sheet
+        </NavLink>
+        <NavLink
+          to="/orders/inventory/new/form"
+          className={({ isActive }) => `manage-view-btn${isActive ? ' active' : ''}`}
+          style={{ width: 'auto', padding: '0 14px', gap: 6, fontSize: 12, fontWeight: 600, textDecoration: 'none' }}
+        >
+          <FileEdit style={{ width: 14, height: 14 }} />
+          Form
+        </NavLink>
+      </div>
+    </div>
   );
 }
 
@@ -134,6 +115,8 @@ function InventorySheetEntry() {
 
   return (
     <>
+      <NewEntryViewBar />
+
       <div className="inventory-sheet-toolbar">
         <span className="inventory-sheet-hint">
           <strong>{filledCount}</strong> new row{filledCount !== 1 ? 's' : ''} ready to save · <strong>{existingRows.length}</strong> existing vehicles below
@@ -158,11 +141,7 @@ function InventorySheetEntry() {
               <tr>
                 <th className="inventory-sheet-row-num" rowSpan={2}>#</th>
                 {SHEET_COLUMN_GROUPS.map(group => (
-                  <th
-                    key={group.label}
-                    colSpan={group.columns.length}
-                    className="inventory-sheet-group-th"
-                  >
+                  <th key={group.label} colSpan={group.columns.length} className="inventory-sheet-group-th">
                     {group.label}
                   </th>
                 ))}
@@ -227,11 +206,11 @@ function InventorySheetEntry() {
             </tbody>
           </table>
         </div>
-        {/* <div className="inventory-sheet-footer">
+        <div className="inventory-sheet-footer">
           <button type="button" className="inventory-sheet-add-row" onClick={addEntryRow}>
-            <Plus style={{ width: 13, height: 13 }} /> Add another entryy row
+            <Plus style={{ width: 13, height: 13 }} /> Add another entry row
           </button>
-        </div> */}
+        </div>
       </div>
     </>
   );
@@ -274,47 +253,16 @@ function SheetCellInput({
 function InventoryFormEntry() {
   return (
     <>
+      <NewEntryViewBar />
+
       <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginBottom: 20 }}>
         <button type="button" className="btn btn-primary">
           <Save style={{ width: 14, height: 14 }} /> Save Entry
         </button>
       </div>
 
+      {/* Orders + Auctions (Orders first, matching sheet order) */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-        <div className="form-card">
-          <div className="form-section">
-            <div className="form-section-header">
-              <div className="form-section-icon">
-                <Gavel style={{ width: 14, height: 14, color: '#2563eb' }} />
-              </div>
-              <span className="form-section-title">Auctions</span>
-              <span className="form-section-tag">auctions</span>
-            </div>
-            <div className="section-grid section-grid-2">
-              <div className="col-span-2">
-                <label className="field-label">Auction ID</label>
-                <input className="field-input" type="text" placeholder="External auction reference" />
-              </div>
-              <div className="col-span-2">
-                <label className="field-label">Auction Name</label>
-                <input className="field-input" type="text" />
-              </div>
-              <div>
-                <label className="field-label">Auction Company</label>
-                <input className="field-input" type="text" />
-              </div>
-              <div>
-                <label className="field-label">Auction Date</label>
-                <input className="field-input" type="datetime-local" />
-              </div>
-              <div className="col-span-2">
-                <label className="field-label">Port Letter</label>
-                <input className="field-input" type="text" />
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div className="form-card">
           <div className="form-section">
             <div className="form-section-header">
@@ -357,6 +305,40 @@ function InventoryFormEntry() {
               <div className="col-span-2">
                 <label className="field-label">Created At</label>
                 <input className="field-input" type="datetime-local" readOnly />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="form-card">
+          <div className="form-section">
+            <div className="form-section-header">
+              <div className="form-section-icon">
+                <Gavel style={{ width: 14, height: 14, color: '#2563eb' }} />
+              </div>
+              <span className="form-section-title">Auctions</span>
+              <span className="form-section-tag">auctions</span>
+            </div>
+            <div className="section-grid section-grid-2">
+              <div className="col-span-2">
+                <label className="field-label">Auction ID</label>
+                <input className="field-input" type="text" placeholder="External auction reference" />
+              </div>
+              <div className="col-span-2">
+                <label className="field-label">Auction Name</label>
+                <input className="field-input" type="text" />
+              </div>
+              <div>
+                <label className="field-label">Auction Company</label>
+                <input className="field-input" type="text" />
+              </div>
+              <div>
+                <label className="field-label">Auction Date</label>
+                <input className="field-input" type="datetime-local" />
+              </div>
+              <div className="col-span-2">
+                <label className="field-label">Port Letter</label>
+                <input className="field-input" type="text" />
               </div>
             </div>
           </div>

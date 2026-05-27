@@ -37,13 +37,7 @@ export default function UsedVehiclesPage() {
 
   return (
     <div className="used-vehicles-page">
-      {/* ── Page Header ──────────────────────────── */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24 }}>
-        <div>
-          <div className="page-eyebrow">Orders</div>
-          <h1 className="page-title">Used Vehicles</h1>
-          <p className="page-subtitle">Inventory of all added vehicle entries and their specifications.</p>
-        </div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
         <div style={{ display: 'flex', gap: 10 }}>
           <button className="btn btn-outline">
             <Download style={{ width: 14, height: 14 }} /> Export CSV
