@@ -11,53 +11,19 @@ import {
   FileEdit, Table2,
 } from 'lucide-react';
 
+import { VEHICLES } from './vehicleData';
+import {
+  SHEET_COLUMN_GROUPS,
+  SHEET_COLUMNS,
+  createEmptySheetRow,
+  vehicleToSheetData,
+  rowHasEntryData,
+  type SheetRow,
+  type SheetData,
+  type SheetColumnDef,
+} from './inventorySheetColumns';
+
 type EntryMode = 'form' | 'sheet';
-
-type SheetRow = {
-  id: string;
-  stock: string;
-  make: string;
-  model: string;
-  chassis: string;
-  year: string;
-  fuel: string;
-  mileage: string;
-  grade: string;
-  price: string;
-  color: string;
-  country: string;
-  auction: string;
-  status: string;
-};
-
-const SHEET_COLUMNS: { key: keyof SheetRow; label: string; width?: number; type?: string }[] = [
-  { key: 'stock', label: 'Stock ID', width: 100 },
-  { key: 'make', label: 'Make', width: 90 },
-  { key: 'model', label: 'Model', width: 110 },
-  { key: 'chassis', label: 'Chassis No.', width: 130 },
-  { key: 'year', label: 'Year', width: 64, type: 'number' },
-  { key: 'fuel', label: 'Fuel', width: 72 },
-  { key: 'mileage', label: 'Mileage', width: 88, type: 'number' },
-  { key: 'grade', label: 'Grade', width: 56 },
-  { key: 'price', label: 'Price (¥)', width: 100, type: 'number' },
-  { key: 'color', label: 'Color', width: 90 },
-  { key: 'country', label: 'Country', width: 80 },
-  { key: 'auction', label: 'Auction', width: 120 },
-  { key: 'status', label: 'Status', width: 100 },
-];
-
-let nextRowId = 1;
-function createEmptyRow(): SheetRow {
-  return {
-    id: String(nextRowId++),
-    stock: '', make: '', model: '', chassis: '', year: '', fuel: '',
-    mileage: '', grade: '', price: '', color: '', country: '', auction: '', status: '',
-  };
-}
-
-function createEmptyRows(count: number): SheetRow[] {
-  return Array.from({ length: count }, () => createEmptyRow());
-}
 
 export default function InventoryNewPage() {
   const navigate = useNavigate();
@@ -75,7 +41,7 @@ export default function InventoryNewPage() {
           <h1 className="page-title">Add Inventory Entry</h1>
           <p className="page-subtitle">
             {entryMode === 'sheet'
-              ? 'Enter multiple vehicles in the sheet — tab between cells or paste from Excel.'
+              ? 'Fill the empty row at the top, then review existing vehicles below. Tab between cells or paste from Excel.'
               : 'Full detailed form: auction, order, vehicle, and vehicle_details.'}
           </p>
         </div>
@@ -114,43 +80,43 @@ export default function InventoryNewPage() {
 }
 
 function InventorySheetEntry() {
-  const [rows, setRows] = useState<SheetRow[]>(() => createEmptyRows(12));
+  const [entryRows, setEntryRows] = useState<SheetRow[]>(() => [createEmptySheetRow()]);
+  const existingRows = VEHICLES.map(v => ({ id: `existing-${v.id}`, ...vehicleToSheetData(v) }));
 
-  const updateCell = (rowId: string, key: keyof SheetRow, value: string) => {
-    setRows(prev => prev.map(r => (r.id === rowId ? { ...r, [key]: value } : r)));
+  const updateCell = (rowId: string, key: keyof SheetData, value: string) => {
+    setEntryRows(prev => prev.map(r => (r.id === rowId ? { ...r, [key]: value } : r)));
   };
 
-  const addRows = (count = 5) => {
-    setRows(prev => [...prev, ...createEmptyRows(count)]);
+  const addEntryRow = () => {
+    setEntryRows(prev => [...prev, createEmptySheetRow()]);
   };
 
-  const removeRow = (rowId: string) => {
-    setRows(prev => (prev.length <= 1 ? prev : prev.filter(r => r.id !== rowId)));
+  const removeEntryRow = (rowId: string) => {
+    setEntryRows(prev => (prev.length <= 1 ? prev : prev.filter(r => r.id !== rowId)));
   };
 
-  const filledCount = rows.filter(r =>
-    r.stock || r.chassis || r.make || r.model
-  ).length;
+  const clearEntryRows = () => {
+    setEntryRows([createEmptySheetRow()]);
+  };
+
+  const filledCount = entryRows.filter(rowHasEntryData).length;
+  const totalColumns = SHEET_COLUMNS.length + 2;
 
   const handlePaste = useCallback((e: React.ClipboardEvent<HTMLTableElement>) => {
     const text = e.clipboardData.getData('text/plain');
     if (!text.includes('\t') && !text.includes('\n')) return;
 
     e.preventDefault();
-    const pastedRows = text
-      .trimEnd()
-      .split(/\r?\n/)
-      .map(line => line.split('\t'));
-
+    const pastedRows = text.trimEnd().split(/\r?\n/).map(line => line.split('\t'));
     const colKeys = SHEET_COLUMNS.map(c => c.key);
 
-    setRows(prev => {
+    setEntryRows(prev => {
       const next = [...prev];
-      let targetIndex = next.findIndex(r => !r.stock && !r.chassis && !r.make);
+      let targetIndex = next.findIndex(r => !rowHasEntryData(r));
 
       pastedRows.forEach(cells => {
         if (targetIndex < 0 || targetIndex >= next.length) {
-          next.push(createEmptyRow());
+          next.push(createEmptySheetRow());
           targetIndex = next.length - 1;
         }
         const row = { ...next[targetIndex] };
@@ -170,17 +136,17 @@ function InventorySheetEntry() {
     <>
       <div className="inventory-sheet-toolbar">
         <span className="inventory-sheet-hint">
-          <strong>{filledCount}</strong> row{filledCount !== 1 ? 's' : ''} with data · Click a cell and type, or paste from Excel
+          <strong>{filledCount}</strong> new row{filledCount !== 1 ? 's' : ''} ready to save · <strong>{existingRows.length}</strong> existing vehicles below
         </span>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button type="button" className="btn btn-ghost" onClick={() => setRows(createEmptyRows(12))}>
-            Clear sheet
+          <button type="button" className="btn btn-ghost" onClick={clearEntryRows}>
+            Clear new rows
           </button>
-          <button type="button" className="btn btn-ghost" onClick={() => addRows(5)}>
-            <Plus style={{ width: 14, height: 14 }} /> Add 5 rows
+          <button type="button" className="btn btn-ghost" onClick={addEntryRow}>
+            <Plus style={{ width: 14, height: 14 }} /> Add entry row
           </button>
           <button type="button" className="btn btn-primary">
-            <Save style={{ width: 14, height: 14 }} /> Save all rows
+            <Save style={{ width: 14, height: 14 }} /> Save new entries
           </button>
         </div>
       </div>
@@ -190,67 +156,118 @@ function InventorySheetEntry() {
           <table className="inventory-sheet-table" onPaste={handlePaste}>
             <thead>
               <tr>
-                <th className="inventory-sheet-row-num">#</th>
+                <th className="inventory-sheet-row-num" rowSpan={2}>#</th>
+                {SHEET_COLUMN_GROUPS.map(group => (
+                  <th
+                    key={group.label}
+                    colSpan={group.columns.length}
+                    className="inventory-sheet-group-th"
+                  >
+                    {group.label}
+                  </th>
+                ))}
+                <th className="inventory-sheet-actions-col" rowSpan={2} />
+              </tr>
+              <tr>
                 {SHEET_COLUMNS.map(col => (
                   <th key={col.key} style={{ minWidth: col.width }}>{col.label}</th>
                 ))}
-                <th className="inventory-sheet-actions-col" />
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, index) => (
-                <tr key={row.id}>
-                  <td className="inventory-sheet-row-num">{index + 1}</td>
+              <tr className="inventory-sheet-section-row">
+                <td colSpan={totalColumns}>
+                  New entry — fill row{entryRows.length > 1 ? 's' : ''} below
+                </td>
+              </tr>
+              {entryRows.map((row, index) => (
+                <tr key={row.id} className="inventory-sheet-entry-row">
+                  <td className="inventory-sheet-row-num inventory-sheet-row-num-new">+{index + 1}</td>
                   {SHEET_COLUMNS.map(col => (
                     <td key={col.key}>
-                      {col.key === 'status' ? (
-                        <select
-                          className="inventory-sheet-cell"
-                          value={row.status}
-                          onChange={e => updateCell(row.id, 'status', e.target.value)}
-                        >
-                          <option value="" />
-                          <option value="Available">Available</option>
-                          <option value="Reserved">Reserved</option>
-                          <option value="Sold">Sold</option>
-                        </select>
-                      ) : (
-                        <input
-                          type={col.type ?? 'text'}
-                          className="inventory-sheet-cell"
-                          value={row[col.key]}
-                          onChange={e => updateCell(row.id, col.key, e.target.value)}
-                          placeholder="—"
-                        />
-                      )}
+                      <SheetCellInput
+                        col={col}
+                        value={row[col.key]}
+                        onChange={value => updateCell(row.id, col.key, value)}
+                      />
                     </td>
                   ))}
                   <td className="inventory-sheet-actions-col">
                     <button
                       type="button"
                       className="action-btn action-btn-delete"
-                      title="Remove row"
-                      onClick={() => removeRow(row.id)}
+                      title="Remove entry row"
+                      onClick={() => removeEntryRow(row.id)}
+                      disabled={entryRows.length <= 1}
                     >
                       <Trash2 style={{ width: 14, height: 14 }} />
                     </button>
                   </td>
                 </tr>
               ))}
+
+              <tr className="inventory-sheet-section-row inventory-sheet-section-existing">
+                <td colSpan={totalColumns}>
+                  Existing vehicles ({existingRows.length})
+                </td>
+              </tr>
+              {existingRows.map((row, index) => (
+                <tr key={row.id} className="inventory-sheet-existing-row">
+                  <td className="inventory-sheet-row-num">{index + 1}</td>
+                  {SHEET_COLUMNS.map(col => (
+                    <td key={col.key}>
+                      <span className="inventory-sheet-readonly" title={row[col.key]}>
+                        {row[col.key] || '—'}
+                      </span>
+                    </td>
+                  ))}
+                  <td className="inventory-sheet-actions-col" />
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
-        <div className="inventory-sheet-footer">
-          <button
-            type="button"
-            className="inventory-sheet-add-row"
-            onClick={() => addRows(1)}
-          >
-            <Plus style={{ width: 13, height: 13 }} /> Add row
+        {/* <div className="inventory-sheet-footer">
+          <button type="button" className="inventory-sheet-add-row" onClick={addEntryRow}>
+            <Plus style={{ width: 13, height: 13 }} /> Add another entryy row
           </button>
-        </div>
+        </div> */}
       </div>
     </>
+  );
+}
+
+function SheetCellInput({
+  col,
+  value,
+  onChange,
+}: {
+  col: SheetColumnDef;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  if (col.input === 'select' && col.options) {
+    return (
+      <select
+        className="inventory-sheet-cell"
+        value={value}
+        onChange={e => onChange(e.target.value)}
+      >
+        {col.options.map(opt => (
+          <option key={opt || 'empty'} value={opt}>{opt || '—'}</option>
+        ))}
+      </select>
+    );
+  }
+
+  return (
+    <input
+      type={col.type ?? 'text'}
+      className="inventory-sheet-cell"
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      placeholder="—"
+    />
   );
 }
 
