@@ -1,15 +1,23 @@
 import React, { useMemo, useState } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import {
   X, Save, User, FileText, Ship, Landmark, Receipt,
   ChevronDown, ChevronUp, ArrowRight, Check, CheckCircle2, Truck,
+  ChevronLeft,
 } from 'lucide-react';
+import Sas3Logo from './Sas3Logo';
 
-const STEPS = [
-  { num: 1, label: 'Identity' },
-  { num: 2, label: 'Financials' },
-  { num: 3, label: 'Logistics' },
-  { num: 4, label: 'Review' },
-] as const;
+const STEPS: {
+  num: number;
+  label: string;
+  desc: string;
+  icon: LucideIcon;
+}[] = [
+  { num: 1, label: 'Identity', desc: 'Order & customer', icon: User },
+  { num: 2, label: 'Financials', desc: 'Pricing & LC costs', icon: Landmark },
+  { num: 3, label: 'Logistics', desc: 'Shipping & lines', icon: Truck },
+  { num: 4, label: 'Review', desc: 'Summary & save', icon: CheckCircle2 },
+];
 
 export interface InvoiceListItem {
   id: number;
@@ -340,41 +348,70 @@ export default function InvoiceFormModal({ open, invoice, onClose, onSave }: Pro
 
   const totals = { vehicleCosts, lcBankCost, cifAmount, profitLoss };
 
+  const currentStep = STEPS[activeStep - 1];
+  const CurrentIcon = currentStep.icon;
+
   return (
-    <div className="drawer-overlay" onClick={onClose}>
-      <div className="drawer-container invoice-drawer" onClick={e => e.stopPropagation()}>
-        <div className="drawer-header">
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#2563eb', fontSize: 12, fontWeight: 700, marginBottom: 4 }}>
-              <FileText style={{ width: 14, height: 14 }} />
-              INVOICE MANAGEMENT
+    <div className="modal-overlay invoice-wizard-overlay" onClick={onClose}>
+      <div className="modal-container invoice-wizard-modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="invoice-wizard-title">
+        <header className="invoice-wizard-header">
+          <div className="invoice-wizard-header-left">
+            <div className="invoice-wizard-brand-logo">
+              <Sas3Logo className="invoice-wizard-logo" height={44} />
             </div>
-            <h2 className="modal-title" style={{ fontSize: 22 }}>
-              {invoice ? `Invoice: #${invoice.stockId}` : 'New Invoice Entry'}
-            </h2>
-            <p className="modal-subtitle">Step {activeStep} of 4 — {STEPS[activeStep - 1].label}</p>
+            <div className="invoice-wizard-brand-divider" aria-hidden />
+            <div className="invoice-wizard-header-text">
+              <p className="invoice-wizard-eyebrow">Invoice management</p>
+              <h2 id="invoice-wizard-title" className="modal-title">
+                {invoice ? `Order #${invoice.stockId}` : 'New invoice entry'}
+              </h2>
+            </div>
           </div>
-          <button type="button" className="close-btn" onClick={onClose} aria-label="Close">
-            <X style={{ width: 22, height: 22 }} />
+          <button type="button" className="close-btn invoice-wizard-close" onClick={onClose} aria-label="Close">
+            <X style={{ width: 20, height: 20 }} />
           </button>
+        </header>
+
+        <nav className="invoice-wizard-stepper" aria-label="Invoice steps">
+          <div className="invoice-wizard-stepper-track" aria-hidden />
+          {STEPS.map((s, idx) => {
+            const Icon = s.icon;
+            const isActive = activeStep === s.num;
+            const isDone = activeStep > s.num;
+            return (
+              <button
+                key={s.num}
+                type="button"
+                className={`invoice-wizard-step ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}`}
+                onClick={() => setActiveStep(s.num)}
+                aria-current={isActive ? 'step' : undefined}
+              >
+                <span className={`invoice-wizard-step-circle ${isActive ? 'active' : ''} ${isDone ? 'done' : ''}`}>
+                  {isDone ? <Check style={{ width: 18, height: 18 }} strokeWidth={2.5} /> : <Icon style={{ width: 18, height: 18 }} strokeWidth={2} />}
+                </span>
+                <span className="invoice-wizard-step-label">{s.label}</span>
+                <span className="invoice-wizard-step-hint">{s.desc}</span>
+                {idx < STEPS.length - 1 && <span className="invoice-wizard-step-chevron" aria-hidden>›</span>}
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="invoice-wizard-step-banner">
+          <span className="invoice-wizard-step-banner-icon">
+            <CurrentIcon style={{ width: 16, height: 16 }} />
+          </span>
+          <div>
+            <strong>Step {activeStep}:</strong> {currentStep.label}
+            <span className="invoice-wizard-step-banner-sep">—</span>
+            {currentStep.desc}
+          </div>
+          <span className="invoice-wizard-step-banner-pct">{Math.round((activeStep / STEPS.length) * 100)}% complete</span>
         </div>
 
-        <div className="drawer-body invoice-drawer-body">
-          <div className="drawer-steps">
-            {STEPS.map(s => (
-              <StepItem
-                key={s.num}
-                num={s.num}
-                label={s.label}
-                active={activeStep === s.num}
-                done={activeStep > s.num}
-                onClick={() => setActiveStep(s.num)}
-              />
-            ))}
-          </div>
-
+        <div className="modal-body invoice-wizard-body">
           {activeStep === 1 && (
-            <div className="step-content">
+            <div className="step-content invoice-step-content">
               <div className="form-group-title"><User style={{ width: 14, height: 14 }} /> Order & Customer Identity</div>
               <div className="invoice-step-grid-2">
                 <div className="form-column" style={{ padding: 16 }}>
@@ -429,7 +466,7 @@ export default function InvoiceFormModal({ open, invoice, onClose, onSave }: Pro
           )}
 
           {activeStep === 2 && (
-            <div className="step-content">
+            <div className="step-content invoice-step-content">
               <div className="form-group-title"><Landmark style={{ width: 14, height: 14 }} /> Pricing, LC & Costs</div>
               <div className="form-column" style={{ padding: 16, marginBottom: 16 }}>
                 <div className="invoice-field-grid">
@@ -503,7 +540,7 @@ export default function InvoiceFormModal({ open, invoice, onClose, onSave }: Pro
           )}
 
           {activeStep === 3 && (
-            <div className="step-content">
+            <div className="step-content invoice-step-content">
               <div className="form-group-title"><Truck style={{ width: 14, height: 14 }} /> Logistics & Documentation</div>
               <div className="form-column" style={{ padding: 16, marginBottom: 16 }}>
                 <div className="invoice-shipping-grid invoice-shipping-grid-drawer">
@@ -554,61 +591,50 @@ export default function InvoiceFormModal({ open, invoice, onClose, onSave }: Pro
           )}
 
           {activeStep === 4 && (
-            <div className="step-content">
+            <div className="step-content invoice-step-content">
               <InvoiceReviewSummary form={form} totals={totals} />
             </div>
           )}
         </div>
 
-        <div className="drawer-footer">
-          <button
-            type="button"
-            className="btn btn-outline"
-            onClick={() => (activeStep > 1 ? setActiveStep(activeStep - 1) : onClose())}
-          >
-            {activeStep === 1 ? 'Cancel' : 'Previous Step'}
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={() => {
-              if (activeStep < 4) setActiveStep(activeStep + 1);
-              else {
-                onSave?.(form);
-                onClose();
-              }
-            }}
-          >
-            {activeStep === 4 ? (
-              <><Save style={{ width: 14, height: 14 }} /> Save & Finalize</>
-            ) : (
-              <>Next Step <ArrowRight style={{ width: 14, height: 14, marginLeft: 6 }} /></>
-            )}
-          </button>
-        </div>
+        <footer className="modal-footer invoice-wizard-footer">
+          <div className="invoice-wizard-footer-left">
+            <div className="invoice-wizard-footer-progress" role="progressbar" aria-valuenow={activeStep} aria-valuemin={1} aria-valuemax={STEPS.length}>
+              <div className="invoice-wizard-footer-fill" style={{ width: `${(activeStep / STEPS.length) * 100}%` }} />
+            </div>
+            <span className="invoice-wizard-footer-text">
+              Step {activeStep} of {STEPS.length} · <em>{currentStep.label}</em>
+            </span>
+          </div>
+          <div className="invoice-wizard-footer-actions">
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => (activeStep > 1 ? setActiveStep(activeStep - 1) : onClose())}
+            >
+              {activeStep === 1 ? 'Cancel' : <><ChevronLeft style={{ width: 14, height: 14 }} /> Back</>}
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => {
+                if (activeStep < 4) setActiveStep(activeStep + 1);
+                else {
+                  onSave?.(form);
+                  onClose();
+                }
+              }}
+            >
+              {activeStep === 4 ? (
+                <><Save style={{ width: 14, height: 14 }} /> Save & Finalize</>
+              ) : (
+                <>Next: {STEPS[activeStep]?.label} <ArrowRight style={{ width: 14, height: 14, marginLeft: 4 }} /></>
+              )}
+            </button>
+          </div>
+        </footer>
       </div>
     </div>
-  );
-}
-
-function StepItem({
-  num,
-  label,
-  active,
-  done,
-  onClick,
-}: {
-  num: number;
-  label: string;
-  active: boolean;
-  done: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button type="button" className={`step-item ${active ? 'active' : ''}`} onClick={onClick} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
-      <div className="step-num">{done ? <Check style={{ width: 12, height: 12 }} /> : num}</div>
-      {label}
-    </button>
   );
 }
 

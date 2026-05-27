@@ -17,6 +17,7 @@ import {
 import ManagePage from './ManagePage';
 import InvoicesPage from './InvoicesPage';
 import UsedVehiclesPage from './UsedVehiclesPage';
+import Sas3Logo from './Sas3Logo';
 
 /* ── Dummy Data ─────────────────────────────────────── */
 const VEHICLES = [
@@ -95,64 +96,14 @@ export default function App() {
   return (
     <div style={{ minHeight: '100vh' }}>
 
-      {/* ── Top Bar ───────────────────────────────────────── */}
-      <header className="topbar">
-        {/* Brand + Search */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
-          <div className="topbar-brand">
-            <div className="topbar-logo">
-              <Gavel style={{ width: 15, height: 15, color: '#fff' }} />
-            </div>
-            <div>
-              <div className="topbar-title">Auction OS</div>
-              <div className="topbar-subtitle">Inventory Suite</div>
-            </div>
-          </div>
-
-          {/* Divider */}
-          <div style={{ width: 1, height: 24, background: '#ebecf0' }} />
-
-          <div className="topbar-search-wrap">
-            <Search style={{
-              position: 'absolute', left: 10,
-              width: 14, height: 14, color: '#94a3b8',
-              pointerEvents: 'none',
-            }} />
-            <input
-              className="topbar-search"
-              placeholder="Search chassis, stock ID…"
-              type="text"
-            />
-          </div>
-        </div>
-
-        {/* Right actions */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <div className="status-pill">
-            <div className="status-dot" />
-            Live
-          </div>
-
-          <div style={{ width: 8 }} />
-
-          <button className="topbar-icon-btn" title="Notifications">
-            <Bell style={{ width: 16, height: 16 }} />
-          </button>
-          <button className="topbar-icon-btn" title="History">
-            <History style={{ width: 16, height: 16 }} />
-          </button>
-          <button className="topbar-icon-btn" title="Help">
-            <HelpCircle style={{ width: 16, height: 16 }} />
-          </button>
-
-          <div className="topbar-avatar" title="Account">
-            <User style={{ width: 15, height: 15, color: '#fff' }} />
-          </div>
-        </div>
-      </header>
 
       {/* ── Sidebar ──────────────────────────────────────── */}
       <nav className="sidebar">
+        <div className="sidebar-brand">
+          <Sas3Logo className="sidebar-logo-img" height={30} />
+          <p className="sidebar-brand-tag">Inventory Suite</p>
+        </div>
+
         <div className="sidebar-section-label">Main Menu</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <NavLink
