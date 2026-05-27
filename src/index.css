@@ -3985,3 +3985,176 @@ textarea.field-input {
   margin-left: 0;
   background: rgba(255, 255, 255, 0.95);
 }
+
+/* RIKSO */
+.rikso-sheet-wrap .rikso-col-transport {
+  width: 44px;
+  text-align: center;
+  padding: 8px 6px !important;
+}
+
+/* Transport expand: pin to viewport, not table scroll width */
+.rikso-transport-expand-row td.rikso-transport-expand-cell {
+  padding: 0 !important;
+  border-bottom: 2px solid #e9d5ff;
+  background: #faf5ff;
+}
+
+.rikso-transport-expand-wrap {
+  position: sticky;
+  left: 0;
+  width: calc(100vw - 48px);
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 12px 16px 14px;
+  z-index: 3;
+}
+
+.rikso-transports-editor {
+  background: transparent;
+}
+
+.rikso-transports-editor-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #7c3aed;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rikso-transport-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 10px;
+  margin-left: auto;
+  border: 1px solid #ddd6fe;
+  border-radius: 7px;
+  background: #fff;
+  color: #7c3aed;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.rikso-transport-add-btn:hover {
+  background: #f5f3ff;
+}
+
+.rikso-transport-legs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rikso-transport-card {
+  background: #fff;
+  border: 1px solid #e9d5ff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.rikso-transport-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #f5f3ff;
+  border-bottom: 1px solid #ede9fe;
+  font-size: 11px;
+  font-weight: 700;
+  color: #6d28d9;
+}
+
+.rikso-transport-card-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
+  padding: 12px;
+}
+
+@media (max-width: 720px) {
+  .rikso-transport-expand-wrap {
+    width: calc(100vw - 24px);
+    padding: 10px 12px;
+  }
+
+  .rikso-transport-card-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rikso-transport-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.rikso-transport-field-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rikso-transport-field-input {
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-family: inherit;
+  color: #0f172a;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.rikso-transport-field-input:focus {
+  outline: none;
+  border-color: #a78bfa;
+  box-shadow: 0 0 0 2px #ede9fe;
+}
+
+.rikso-transport-field-value {
+  font-size: 12.5px;
+  color: #334155;
+  padding: 6px 0;
+  word-break: break-word;
+}
+
+.rikso-transports-total {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e9d5ff;
+  font-size: 11px;
+  font-weight: 600;
+  color: #7c3aed;
+  text-align: right;
+}
+
+.rikso-transports-total strong {
+  color: #1e293b;
+  font-size: 13px;
+  margin-left: 6px;
+}
+
+/* Form view: cards can use full card width */
+.rikso-transports-editor:not(.rikso-transports-editor--compact) .rikso-transport-card-fields {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 960px) {
+  .rikso-transports-editor:not(.rikso-transports-editor--compact) .rikso-transport-card-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

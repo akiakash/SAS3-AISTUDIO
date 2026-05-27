@@ -47,6 +47,7 @@ const PARENT_NAV: ParentNavItem[] = [
     children: [
       { label: 'NEW ENTRY', to: '/orders/inventory/new', matchPrefix: true },
       { label: 'INVENTORY', to: '/orders/inventory', end: true },
+      { label: 'RIKSO', to: '/orders/rikso', matchPrefix: true },
       { label: 'INVOICE', to: '/orders/invoice' },
       { label: 'USED VEHICLES', to: '/orders/used-vehicles' },
     ],
@@ -56,6 +57,11 @@ const PARENT_NAV: ParentNavItem[] = [
 const NEW_ENTRY_VIEWS = [
   { label: 'SHEET', to: '/orders/inventory/new' },
   { label: 'FORM', to: '/orders/inventory/new/form' },
+] as const;
+
+const RIKSO_VIEWS = [
+  { label: 'LIST', to: '/orders/rikso' },
+  { label: 'FORM', to: '/orders/rikso/form' },
 ] as const;
 
 function parentFromPath(pathname: string): ParentId {
@@ -87,6 +93,8 @@ export default function TopNavbar() {
   const currentParent = PARENT_NAV.find(p => p.id === activeParent) ?? PARENT_NAV[0];
   const isNewEntryPage = location.pathname.startsWith('/orders/inventory/new');
   const isFormView = location.pathname.includes('/orders/inventory/new/form');
+  const isRiksoPage = location.pathname.startsWith('/orders/rikso');
+  const isRiksoFormView = location.pathname.includes('/orders/rikso/form');
 
   const filteredSubItems = currentParent.children.filter(item =>
     menuSearch === '' || item.label.toLowerCase().includes(menuSearch.toLowerCase())
@@ -166,6 +174,26 @@ export default function TopNavbar() {
                 className={() =>
                   `nav-sub-tab nav-sub-tab-tertiary${
                     (to.includes('/form') ? isFormView : isNewEntryPage && !isFormView) ? ' active' : ''
+                  }`
+                }
+              >
+                {label}
+              </NavLink>
+            ))}
+          </>
+        )}
+
+        {isRiksoPage && (
+          <>
+            <span className="nav-sub-divider" aria-hidden />
+            {RIKSO_VIEWS.map(({ label, to }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={to === '/orders/rikso'}
+                className={() =>
+                  `nav-sub-tab nav-sub-tab-tertiary${
+                    (to.includes('/form') ? isRiksoFormView : isRiksoPage && !isRiksoFormView) ? ' active' : ''
                   }`
                 }
               >

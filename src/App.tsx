@@ -10,6 +10,7 @@ import InvoicesPage from './InvoicesPage';
 import UsedVehiclesPage from './UsedVehiclesPage';
 import InventoryNewPage from './InventoryNewPage';
 import InventoryPage from './InventoryPage';
+import RiksoPage from './RiksoPage';
 import TopNavbar from './TopNavbar';
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/orders/used-vehicles" element={<UsedVehiclesPage />} />
           <Route path="/orders/inventory" element={<InventoryPage />} />
           <Route path="/orders/inventory/new/*" element={<InventoryNewPage />} />
+          <Route path="/orders/rikso/*" element={<RiksoPage />} />
         </Routes>
       </main>
     </div>
