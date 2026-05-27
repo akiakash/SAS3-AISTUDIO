@@ -4,6 +4,7 @@
  */
 
 import type { Vehicle } from './vehicleData';
+import { buildSheetDetailsFromVehicle } from './vehicleSheetDetails';
 
 export type SheetData = {
   auctionId: string;
@@ -166,23 +167,7 @@ export function createEmptySheetRow(): SheetRow {
 }
 
 export function vehicleToSheetData(v: Vehicle): SheetData {
-  return {
-    ...EMPTY_SHEET_DATA,
-    make: v.make,
-    brand: v.brand,
-    model: v.model,
-    chassisNumber: v.chassis,
-    manufactureYear: String(v.year),
-    fuel: v.fuel,
-    kmMileage: String(v.mileage),
-    auctionGrade: v.grade,
-    priceYen: String(v.price),
-    color: v.color,
-    country: v.country,
-    stockId: v.stock,
-    availabilityStatus: v.status,
-    mileageUnit: 'km',
-  };
+  return buildSheetDetailsFromVehicle(v);
 }
 
 export function rowHasEntryData(row: SheetData): boolean {
