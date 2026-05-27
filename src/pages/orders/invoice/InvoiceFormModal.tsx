@@ -5,7 +5,7 @@ import {
   ChevronDown, ChevronUp, ArrowRight, Check, CheckCircle2, Truck,
   ChevronLeft,
 } from 'lucide-react';
-import Sas3Logo from './Sas3Logo';
+import Sas3Logo from '../../../components/branding/Sas3Logo';
 
 const STEPS: {
   num: number;

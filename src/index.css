@@ -4148,7 +4148,457 @@ textarea.field-input {
   margin-left: 6px;
 }
 
-/* Form view: cards can use full card width */
+/* RIKSO form — sidebar + detail panel */
+.rikso-form-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  min-height: calc(100vh - var(--app-header-h, 118px) - 80px);
+}
+
+@media (max-width: 960px) {
+  .rikso-form-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rikso-form-sidebar {
+  position: sticky;
+  top: calc(var(--app-header-h, 118px) + 12px);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - var(--app-header-h, 118px) - 48px);
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  overflow: hidden;
+}
+
+.rikso-form-sidebar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.rikso-form-sidebar-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.rikso-form-sidebar-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.rikso-form-sidebar-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 14px 0;
+  padding: 0 12px;
+  height: 38px;
+  background: #f4f5f7;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+}
+
+.rikso-form-sidebar-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-family: inherit;
+  color: #0f172a;
+  outline: none;
+}
+
+.rikso-form-sidebar-search input::placeholder {
+  color: #94a3b8;
+}
+
+.rikso-form-orders-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 12px 14px;
+}
+
+.rikso-form-sidebar-empty {
+  padding: 24px 12px;
+  text-align: center;
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.rikso-form-order-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  padding: 12px 12px 12px 14px;
+  margin-bottom: 6px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: #f8fafc;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rikso-form-order-item:hover {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+.rikso-form-order-item.active {
+  background: #fff;
+  border-color: #93c5fd;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+}
+
+.rikso-form-order-item-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.rikso-form-order-id {
+  font-size: 12px;
+  font-weight: 800;
+  color: #2563eb;
+  font-family: ui-monospace, monospace;
+}
+
+.rikso-form-order-vehicle {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rikso-form-order-auction {
+  font-size: 11px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rikso-form-order-transport-pill {
+  align-self: flex-start;
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #7c3aed;
+  background: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+
+.rikso-form-order-chevron {
+  flex-shrink: 0;
+  color: #cbd5e1;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.rikso-form-order-chevron.active {
+  color: #2563eb;
+  transform: translateX(2px);
+}
+
+.rikso-form-detail {
+  min-width: 0;
+}
+
+.rikso-form-detail-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rikso-form-detail-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.rikso-form-detail-hint {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.rikso-form-detail-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.rikso-detail-hero {
+  padding: 22px 24px;
+  background: linear-gradient(135deg, #1e40af 0%, #2563eb 48%, #3b82f6 100%);
+  color: #fff;
+}
+
+.rikso-detail-hero-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.85;
+  margin-bottom: 6px;
+}
+
+.rikso-detail-hero-id {
+  margin: 0 0 8px;
+  font-size: 22px;
+  font-weight: 800;
+  font-family: ui-monospace, monospace;
+  letter-spacing: -0.02em;
+}
+
+.rikso-detail-hero-vehicle {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.rikso-detail-hero-dot {
+  opacity: 0.6;
+  margin: 0 4px;
+}
+
+.rikso-detail-hero-chassis {
+  margin: 0 0 16px;
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+  opacity: 0.8;
+}
+
+.rikso-detail-hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rikso-detail-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 100px;
+  backdrop-filter: blur(4px);
+}
+
+.rikso-detail-chip--accent {
+  background: rgba(124, 58, 237, 0.35);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+.rikso-form-detail-body {
+  padding: 20px 24px 24px;
+}
+
+.rikso-order-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.rikso-detail-group {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.rikso-detail-group-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.rikso-detail-group-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
+}
+
+.rikso-detail-group-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rikso-detail-dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+}
+
+.rikso-detail-dl-item {
+  min-width: 0;
+}
+
+.rikso-detail-dl-item--wide {
+  grid-column: 1 / -1;
+}
+
+.rikso-detail-dl-item dt {
+  margin: 0 0 3px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.rikso-detail-dl-item dd {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: #0f172a;
+  word-break: break-word;
+}
+
+.rikso-form-transport-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.rikso-form-transport-head {
+  padding: 18px 22px;
+  background: linear-gradient(180deg, #faf5ff 0%, #fff 100%);
+  border-bottom: 1px solid #ede9fe;
+}
+
+.rikso-form-transport-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.rikso-form-transport-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #ede9fe;
+  border: 1px solid #ddd6fe;
+  color: #7c3aed;
+  flex-shrink: 0;
+}
+
+.rikso-form-transport-title h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.rikso-form-transport-title p {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.rikso-form-transport-body {
+  padding: 18px 22px 22px;
+}
+
+.rikso-form-transport-body .rikso-transports-editor {
+  background: transparent;
+}
+
+.rikso-form-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+  padding: 48px 32px;
+  text-align: center;
+  background: #fff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 14px;
+}
+
+.rikso-form-empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 16px;
+  border-radius: 14px;
+  background: #f1f5f9;
+  color: #94a3b8;
+}
+
+.rikso-form-empty h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.rikso-form-empty p {
+  margin: 0;
+  max-width: 280px;
+  font-size: 13px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
+
 .rikso-transports-editor:not(.rikso-transports-editor--compact) .rikso-transport-card-fields {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }

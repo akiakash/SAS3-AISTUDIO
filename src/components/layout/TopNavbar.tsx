@@ -45,8 +45,9 @@ const PARENT_NAV: ParentNavItem[] = [
     label: 'ORDERS',
     defaultPath: '/orders/inventory',
     children: [
-      { label: 'NEW ENTRY', to: '/orders/inventory/new', matchPrefix: true },
       { label: 'INVENTORY', to: '/orders/inventory', end: true },
+      { label: 'NEW ENTRY', to: '/orders/inventory/new', matchPrefix: true },
+     
       { label: 'RIKSO', to: '/orders/rikso', matchPrefix: true },
       { label: 'INVOICE', to: '/orders/invoice' },
       { label: 'USED VEHICLES', to: '/orders/used-vehicles' },

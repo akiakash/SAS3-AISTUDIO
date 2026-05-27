@@ -5,13 +5,14 @@
 
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import ManagePage from './ManagePage';
-import InvoicesPage from './InvoicesPage';
-import UsedVehiclesPage from './UsedVehiclesPage';
-import InventoryNewPage from './InventoryNewPage';
-import InventoryPage from './InventoryPage';
-import RiksoPage from './RiksoPage';
-import TopNavbar from './TopNavbar';
+import TopNavbar from '../components/layout/TopNavbar';
+import DashboardPage from '../pages/dashboard/DashboardPage';
+import ManagePage from '../pages/vehicles/ManagePage';
+import UsedVehiclesPage from '../pages/vehicles/UsedVehiclesPage';
+import InvoicesPage from '../pages/orders/invoice/InvoicesPage';
+import InventoryPage from '../pages/orders/inventory/InventoryPage';
+import InventoryNewPage from '../pages/orders/inventory/InventoryNewPage';
+import RiksoPage from '../pages/orders/rikso/RiksoPage';
 
 export default function App() {
   return (
@@ -31,11 +32,5 @@ export default function App() {
         </Routes>
       </main>
     </div>
-  );
-}
-
-function DashboardPage() {
-  return (
-    <p className="page-subtitle">Overview and quick actions for your inventory suite.</p>
   );
 }

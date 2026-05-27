@@ -13,9 +13,9 @@ import {
 import {
   VEHICLES, TRANSPORTS, groupVehiclesByOrder,
   type Vehicle, type OrderGroup,
-} from './vehicleData';
+} from '../../../data/inventory/vehicleData';
 import VehicleDetailPanel from './VehicleDetailPanel';
-import { useInventoryAttachments } from './inventoryAttachments';
+import { useInventoryAttachments } from './useInventoryAttachments';
 
 type ViewMode = 'orders' | 'list';
 

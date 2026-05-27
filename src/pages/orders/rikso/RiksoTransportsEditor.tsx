@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { Plus, Trash2, Truck } from 'lucide-react';
-import type { RiksoTransport } from './riksoData';
-import { createEmptyTransport } from './riksoData';
+import type { RiksoTransport } from '../../../data/rikso/riksoData';
+import { createEmptyTransport } from '../../../data/rikso/riksoData';
 
 type RiksoTransportsEditorProps = {
   transports: RiksoTransport[];

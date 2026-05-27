@@ -11,7 +11,7 @@ import {
   Table2, FileEdit,
 } from 'lucide-react';
 
-import { VEHICLES } from './vehicleData';
+import { VEHICLES } from '../../../data/inventory/vehicleData';
 import {
   SHEET_COLUMN_GROUPS,
   SHEET_COLUMNS,
@@ -21,7 +21,7 @@ import {
   type SheetRow,
   type SheetData,
   type SheetColumnDef,
-} from './inventorySheetColumns';
+} from '../../../data/inventory/inventorySheetColumns';
 
 export default function InventoryNewPage() {
   return (

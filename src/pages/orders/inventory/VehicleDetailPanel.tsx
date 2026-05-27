@@ -5,9 +5,8 @@
 
 import React, { ReactNode } from 'react';
 import { Truck, Plus, Pencil } from 'lucide-react';
-import { SHEET_COLUMN_GROUPS } from './inventorySheetColumns';
-import { vehicleToSheetData } from './inventorySheetColumns';
-import type { Vehicle, TransportRecord } from './vehicleData';
+import { SHEET_COLUMN_GROUPS, vehicleToSheetData } from '../../../data/inventory/inventorySheetColumns';
+import type { Vehicle, TransportRecord } from '../../../data/inventory/vehicleData';
 import VehicleAttachments, {
   type VehicleAttachmentState,
 } from './VehicleAttachments';
