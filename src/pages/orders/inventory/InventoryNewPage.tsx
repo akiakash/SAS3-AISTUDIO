@@ -114,7 +114,7 @@ function InventorySheetEntry() {
   }, []);
 
   return (
-    <>
+    <div className="inventory-sheet-page">
       <NewEntryViewBar />
 
       <div className="inventory-sheet-toolbar">
@@ -134,7 +134,7 @@ function InventorySheetEntry() {
         </div>
       </div>
 
-      <div className="audit-card inventory-sheet-wrap">
+      <div className="inventory-sheet-wrap">
         <div className="inventory-sheet-scroll">
           <table className="inventory-sheet-table" onPaste={handlePaste}>
             <thead>
@@ -212,7 +212,7 @@ function InventorySheetEntry() {
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

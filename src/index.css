@@ -3124,8 +3124,69 @@ textarea.field-input {
 }
 
 /* ════════════════════════════════════════════════════════
-   INVENTORY SHEET ENTRY (Excel-style)
+   INVENTORY SHEET ENTRY (Excel-style, full viewport)
 ════════════════════════════════════════════════════════ */
+
+.main-content:has(.inventory-sheet-page),
+.main-content:has(.rikso-list-page) {
+  padding: 0;
+  background: #fff;
+}
+
+.inventory-sheet-page,
+.rikso-list-page {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - var(--app-header-h));
+  width: 100%;
+  background: #fff;
+}
+
+.inventory-sheet-page .new-entry-view-bar,
+.rikso-list-page .new-entry-view-bar {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 10px 16px;
+  border: none;
+  border-bottom: 1px solid #dfe1e6;
+  border-radius: 0;
+  background: #f8fafc;
+}
+
+.inventory-sheet-page .inventory-sheet-toolbar,
+.rikso-list-page .inventory-sheet-toolbar {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 10px 16px;
+  border-bottom: 1px solid #dfe1e6;
+  background: #fff;
+}
+
+.inventory-sheet-page .inventory-sheet-wrap,
+.rikso-list-page .inventory-sheet-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  background: #fff;
+}
+
+.inventory-sheet-page .inventory-sheet-scroll,
+.rikso-list-page .inventory-sheet-scroll {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow: auto;
+}
+
+.inventory-sheet-page .inventory-sheet-footer {
+  flex-shrink: 0;
+  border-top: 1px solid #dfe1e6;
+  background: #f8fafc;
+}
 
 .inventory-sheet-toolbar {
   display: flex;

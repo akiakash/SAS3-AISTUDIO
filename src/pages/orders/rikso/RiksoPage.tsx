@@ -71,7 +71,7 @@ function RiksoListView() {
   const colSpan = RIKSO_COLUMNS.length + 2;
 
   return (
-    <>
+    <div className="rikso-list-page">
       <RiksoViewBar />
       <div className="inventory-sheet-toolbar">
         <span className="inventory-sheet-hint">
@@ -82,7 +82,7 @@ function RiksoListView() {
         </button>
       </div>
 
-      <div className="audit-card inventory-sheet-wrap rikso-sheet-wrap">
+      <div className="inventory-sheet-wrap rikso-sheet-wrap">
         <div className="inventory-sheet-scroll">
           <table className="inventory-sheet-table rikso-sheet-table">
             <thead>
@@ -111,7 +111,7 @@ function RiksoListView() {
           </table>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
